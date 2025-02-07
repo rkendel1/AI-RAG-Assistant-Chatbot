@@ -44,7 +44,7 @@ Currently, the app is deployed live on Vercel at: [https://lumina-david.vercel.a
 
 For the backend, it is deployed live also on Vercel at: [https://ai-assistant-chatbot-server.vercel.app/](https://ai-assistant-chatbot-server.vercel.app/).
 
-Alternatively, the backup app is deployed live on Netlify at: [https://lumina-ai-chatbot.netlify.app/](https://lumina-ai-chatbot.netlify.app/).
+Alternatively, the backup frontend is deployed live on Netlify at: [https://lumina-ai-chatbot.netlify.app/](https://lumina-ai-chatbot.netlify.app/).
 
 ### Key Technologies
 
