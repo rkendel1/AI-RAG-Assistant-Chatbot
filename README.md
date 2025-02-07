@@ -371,6 +371,7 @@ To view the API documentation, you can use tools like Swagger UI or Postman to i
 
 ## License
 
+
 This project is licensed under the [MIT License](LICENSE).
 
 ---
