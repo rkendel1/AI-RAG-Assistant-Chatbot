@@ -134,8 +134,6 @@ const Navbar: React.FC<NavbarProps> = ({
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          bgcolor: darkMode ? "grey.900" : "white",
-          color: darkMode ? "white" : "black",
           boxShadow: "0px 1px 5px 0px rgba(0,0,0,0.2)",
         }}
       >

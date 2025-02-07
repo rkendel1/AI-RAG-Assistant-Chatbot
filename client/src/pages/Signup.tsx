@@ -59,7 +59,14 @@ const Signup: React.FC = () => {
           label="Email"
           margin="normal"
           value={email}
+          required={true}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSignup();
+            }
+          }}
           disabled={loadingSignup}
         />
         <TextField
@@ -68,7 +75,14 @@ const Signup: React.FC = () => {
           margin="normal"
           type={showPw ? "text" : "password"}
           value={password}
+          required={true}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSignup();
+            }
+          }}
           disabled={loadingSignup}
           InputProps={{
             endAdornment: (
@@ -89,7 +103,14 @@ const Signup: React.FC = () => {
           margin="normal"
           type={showConfirmPw ? "text" : "password"}
           value={confirmPassword}
+          required={true}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSignup();
+            }
+          }}
           disabled={loadingSignup}
           InputProps={{
             endAdornment: (

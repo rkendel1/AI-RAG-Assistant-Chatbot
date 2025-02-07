@@ -85,7 +85,6 @@ const swaggerOptions = {
       },
     ],
   },
-  // Adjust the paths below to point to your route files containing Swagger comments.
   apis: ["./src/routes/*.ts", "./src/routes/*.js", './src/models/*.js'],
 };
 

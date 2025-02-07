@@ -81,6 +81,13 @@ const ForgotPassword: React.FC = () => {
               margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required={true}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleVerifyEmail();
+                }
+              }}
               disabled={loadingVerify}
             />
             {error && (
@@ -111,7 +118,14 @@ const ForgotPassword: React.FC = () => {
               margin="normal"
               type={showNewPassword ? "text" : "password"}
               value={newPassword}
+              required={true}
               onChange={(e) => setNewPassword(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleResetPassword();
+                }
+              }}
               disabled={loadingReset}
               InputProps={{
                 endAdornment: (
@@ -133,7 +147,14 @@ const ForgotPassword: React.FC = () => {
               margin="normal"
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
+              required={true}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleResetPassword();
+                }
+              }}
               disabled={loadingReset}
               InputProps={{
                 endAdornment: (

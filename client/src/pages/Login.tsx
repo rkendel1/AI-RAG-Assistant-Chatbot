@@ -50,17 +50,31 @@ const Login: React.FC = () => {
           fullWidth
           label="Email"
           margin="normal"
+          required={true}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleLogin();
+            }
+          }}
           disabled={loadingLogin}
         />
         <TextField
           fullWidth
           label="Password"
           margin="normal"
+          required={true}
           type={showPw ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleLogin();
+            }
+          }}
           disabled={loadingLogin}
           InputProps={{
             endAdornment: (
