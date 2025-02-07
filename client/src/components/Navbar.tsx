@@ -50,6 +50,8 @@ const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const text = "Lumina AI";
+  const colors = ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#9D4EDD"];
 
   // A ref to store the debounce timer.
   const debounceTimerRef = useRef<number | null>(null);
@@ -230,9 +232,36 @@ const Navbar: React.FC<NavbarProps> = ({
         {!isMobile && (
           <Typography
             variant="h6"
-            sx={{ ml: 2, fontSize: "22px", fontWeight: "bold" }}
+            sx={{ ml: 2, fontSize: "24px", fontWeight: "bold" }}
           >
-            Lumina AI
+            {text.split("").map((char, index) => {
+              // Preserve spaces without applying styles
+              if (char === " ") {
+                return (
+                  <Box key={index} component="span">
+                    &nbsp;
+                  </Box>
+                );
+              }
+              const color = colors[index % colors.length];
+              return (
+                <Box
+                  key={index}
+                  component="span"
+                  sx={{
+                    color, // original color
+                    display: "inline-block",
+                    transition: "transform 0.3s ease, color 0.3s ease",
+                    "&:hover": {
+                      transform: "scale(1.2)",
+                      color: "#ffffff", // hover color (white for strong contrast)
+                    },
+                  }}
+                >
+                  {char}
+                </Box>
+              );
+            })}
           </Typography>
         )}
       </Toolbar>

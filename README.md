@@ -2,6 +2,10 @@
 
 **David Nguyen's Personal AI Assistant** - **Lumina** is a full-stack web application that allows users to ask questions about David Nguyen, as well as any other topics, and receive instant, personalized responses powered by state‑of‑the‑art AI. Users can log in to save their conversation history or continue as guests. The app uses modern technologies and provides a sleek, responsive user interface with animations.
 
+<p align="center">
+  <img src="img/lumina.png" alt="Lumina Logo" width="50%" style="border-radius: 10px"
+</p>
+
 ## Table of Contents
 
 - [Live App](#live-app)
@@ -29,6 +33,8 @@
   - [Chat](#chat)
   - [Swagger API Documentation](#swagger-api-documentation)
 - [Project Structure](#project-structure)
+- [Dockerization](#dockerization)
+- [OpenAPI Specification](#openapi-specification)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -37,6 +43,8 @@
 Currently, the app is deployed live on Vercel at: [https://lumina-david.vercel.app](https://lumina-david.vercel.app). Feel free to check it out!
 
 For the backend, it is deployed live also on Vercel at: [https://ai-assistant-chatbot-server.vercel.app/](https://ai-assistant-chatbot-server.vercel.app/).
+
+Alternatively, the backup app is deployed live on Netlify at: [https://lumina-ai-chatbot.netlify.app/](https://lumina-ai-chatbot.netlify.app/).
 
 ### Key Technologies
 
@@ -49,7 +57,13 @@ For the backend, it is deployed live also on Vercel at: [https://ai-assistant-ch
 ![Material UI](https://img.shields.io/badge/Material--UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=json-web-tokens)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)
+![LangChain](https://img.shields.io/badge/LangChain-000000?style=for-the-badge&logo=langchain&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Jupyter Notebook](https://img.shields.io/badge/Jupyter-FFCA28?style=for-the-badge&logo=jupyter&logoColor=black)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 
 ## Features
 
@@ -73,14 +87,24 @@ The project is divided into two main parts:
   - Conversation management (create, load, update, and search conversations).
   - AI chat integration (simulated calls to external generative AI APIs).
   - Additional endpoints for email verification and password reset.
+  - MongoDB is used for data storage, with Mongoose for object modeling.
 
 - **Frontend:**  
   A React application built with TypeScript and Material‑UI (MUI). It includes:
+
   - A modern, animated user interface for chatting with the AI.
   - A landing page showcasing the app’s features.
   - Pages for login, signup, and password reset.
   - A collapsible sidebar for conversation history.
   - Theme toggling (dark/light mode) and responsive design.
+
+- **AI/ML:**
+  Use RAG (Retrieval-Augmented Generation) & LangChain to enhance the AI's responses by retrieving relevant information from a knowledge base or external sources. This involves:
+  - Retrieval: Implement a retrieval mechanism to fetch relevant documents or data from a knowledge base or external sources.
+  - Augmentation: Combine the retrieved information with the user's query to provide a more informed response.
+  - Generation: Use a generative model to create a response based on the augmented input.
+  - Feedback Loop: Implement a feedback loop to continuously improve the system based on user interactions and feedback.
+  - LangChain: Use LangChain to manage the entire process, from retrieval to generation, ensuring a seamless integration of RAG into the chatbot's workflow.
 
 ## Technologies Used
 
@@ -264,9 +288,14 @@ The project is divided into two main parts:
 
 ```
 AI-Assistant-Chatbot/
+├── docker-compose.yml
+├── package.json
+├── tsconfig.json
 ├── client/                         # Frontend React application
 │   ├── package.json
 │   ├── tsconfig.json
+│   ├── docker-compose.yml
+│   ├── Dockerfile
 │   └── src/
 │       ├── App.tsx
 │       ├── index.tsx
@@ -295,6 +324,8 @@ AI-Assistant-Chatbot/
 └── server/                         # Backend Express application
     ├── package.json
     ├── tsconfig.json
+    ├── Dockerfile
+    ├── docker-compose.yml
     └── src/
         ├── server.ts
         ├── models/
@@ -311,6 +342,24 @@ AI-Assistant-Chatbot/
         └── middleware/
             └── auth.ts
 ```
+
+## Dockerization
+
+To run the application using Docker, simply run `docker-compose up` in the root directory of the project. This will start both the backend and frontend services as defined in the `docker-compose.yml` file.
+
+**Why Dockerize?**
+
+- **Consistency:** Ensures the application runs the same way in different environments.
+- **Isolation:** Keeps dependencies and configurations contained.
+- **Scalability:** Makes it easier to scale services independently.
+- **Simplified Deployment:** Streamlines the deployment process.
+- **Easier Collaboration:** Provides a consistent environment for all developers.
+
+## OpenAPI Specification
+
+There is an OpenAPI specification file (`openapi.yaml`) in the root directory that describes the API endpoints, request/response formats, and authentication methods. This can be used to generate client SDKs or documentation.
+
+To view the API documentation, you can use tools like Swagger UI or Postman to import the `openapi.yaml` file. Or just go to the `/docs` endpoint of the deployed backend.
 
 ## Contributing
 
