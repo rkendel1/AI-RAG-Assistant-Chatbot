@@ -130,7 +130,15 @@ const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <AppBar position="static" sx={{ transition: "all 0.3s" }}>
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          bgcolor: darkMode ? "grey.900" : "white",
+          color: darkMode ? "white" : "black",
+          boxShadow: "0px 1px 5px 0px rgba(0,0,0,0.2)",
+        }}
+      >
         <Box display="flex" alignItems="center" flex="1">
           {/* Sidebar Toggle */}
           <IconButton
@@ -162,6 +170,7 @@ const Navbar: React.FC<NavbarProps> = ({
               padding: 1,
               flex: 1,
               transition: "all 0.3s",
+              boxShadow: "0px 1px 5px 0px rgba(0,0,0,0.2)",
             }}
           >
             <SearchIcon
@@ -254,7 +263,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     transition: "transform 0.3s ease, color 0.3s ease",
                     "&:hover": {
                       transform: "scale(1.2)",
-                      color: "#ffffff", // hover color (white for strong contrast)
+                      color: "#e19292", // hover color (white for strong contrast)
                     },
                   }}
                 >

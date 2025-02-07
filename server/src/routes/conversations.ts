@@ -20,7 +20,48 @@ const router = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Conversation'
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: The unique identifier for the conversation.
+ *                 user:
+ *                   type: string
+ *                   description: The ID of the user who owns this conversation.
+ *                 title:
+ *                   type: string
+ *                   description: The title of the conversation.
+ *                 messages:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       sender:
+ *                         type: string
+ *                         enum: [user, assistant]
+ *                         description: The sender of the message.
+ *                       text:
+ *                         type: string
+ *                         description: The content of the message.
+ *                       timestamp:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The time when the message was sent.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The creation time of the conversation.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The last update time of the conversation.
+ *               example:
+ *                 _id: "603e5e534cc7d52e2c2f7c90"
+ *                 user: "603e5e534cc7d52e2c2f7c90"
+ *                 title: "New Conversation"
+ *                 messages: []
+ *                 createdAt: "2023-02-06T00:00:00.000Z"
+ *                 updatedAt: "2023-02-06T00:00:00.000Z"
  *       500:
  *         description: Internal server error.
  */
@@ -56,7 +97,48 @@ router.post("/", authenticateJWT, async (req: AuthRequest, res: Response) => {
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Conversation'
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The unique identifier for the conversation.
+ *                   user:
+ *                     type: string
+ *                     description: The ID of the user who owns this conversation.
+ *                   title:
+ *                     type: string
+ *                     description: The title of the conversation.
+ *                   messages:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         sender:
+ *                           type: string
+ *                           enum: [user, assistant]
+ *                           description: The sender of the message.
+ *                         text:
+ *                           type: string
+ *                           description: The content of the message.
+ *                         timestamp:
+ *                           type: string
+ *                           format: date-time
+ *                           description: The time when the message was sent.
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The creation time of the conversation.
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The last update time of the conversation.
+ *                 example:
+ *                   - _id: "603e5e534cc7d52e2c2f7c90"
+ *                     user: "603e5e534cc7d52e2c2f7c90"
+ *                     title: "New Conversation"
+ *                     messages: []
+ *                     createdAt: "2023-02-06T00:00:00.000Z"
+ *                     updatedAt: "2023-02-06T00:00:00.000Z"
  *       500:
  *         description: Internal server error.
  */
@@ -92,7 +174,51 @@ router.get("/", authenticateJWT, async (req: AuthRequest, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Conversation'
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: The unique identifier for the conversation.
+ *                 user:
+ *                   type: string
+ *                   description: The ID of the user who owns this conversation.
+ *                 title:
+ *                   type: string
+ *                   description: The title of the conversation.
+ *                 messages:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       sender:
+ *                         type: string
+ *                         enum: [user, assistant]
+ *                         description: The sender of the message.
+ *                       text:
+ *                         type: string
+ *                         description: The content of the message.
+ *                       timestamp:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The time when the message was sent.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The creation time of the conversation.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The last update time of the conversation.
+ *               example:
+ *                 _id: "603e5e534cc7d52e2c2f7c90"
+ *                 user: "603e5e534cc7d52e2c2f7c90"
+ *                 title: "New Conversation"
+ *                 messages:
+ *                   - sender: user
+ *                     text: "Hello"
+ *                     timestamp: "2023-02-06T00:00:00.000Z"
+ *                 createdAt: "2023-02-06T00:00:00.000Z"
+ *                 updatedAt: "2023-02-06T00:00:00.000Z"
  *       404:
  *         description: Conversation not found.
  *       500:
@@ -148,7 +274,48 @@ router.get("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Conversation'
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: The unique identifier for the conversation.
+ *                 user:
+ *                   type: string
+ *                   description: The ID of the user who owns this conversation.
+ *                 title:
+ *                   type: string
+ *                   description: The title of the conversation.
+ *                 messages:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       sender:
+ *                         type: string
+ *                         enum: [user, assistant]
+ *                         description: The sender of the message.
+ *                       text:
+ *                         type: string
+ *                         description: The content of the message.
+ *                       timestamp:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The time when the message was sent.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The creation time of the conversation.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The last update time of the conversation.
+ *               example:
+ *                 _id: "603e5e534cc7d52e2c2f7c90"
+ *                 user: "603e5e534cc7d52e2c2f7c90"
+ *                 title: "Updated Conversation Title"
+ *                 messages: []
+ *                 createdAt: "2023-02-06T00:00:00.000Z"
+ *                 updatedAt: "2023-02-06T00:00:00.000Z"
  *       404:
  *         description: Conversation not found.
  *       500:
@@ -161,7 +328,7 @@ router.put("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
     const conversation = await Conversation.findOneAndUpdate(
       { _id: req.params.id, user: userId },
       { title },
-      { new: true },
+      { new: true }
     );
     if (!conversation) {
       return res.status(404).json({ message: "Conversation not found" });
@@ -196,31 +363,71 @@ router.put("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Conversation'
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The unique identifier for the conversation.
+ *                   user:
+ *                     type: string
+ *                     description: The ID of the user who owns this conversation.
+ *                   title:
+ *                     type: string
+ *                     description: The title of the conversation.
+ *                   messages:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         sender:
+ *                           type: string
+ *                           enum: [user, assistant]
+ *                           description: The sender of the message.
+ *                         text:
+ *                           type: string
+ *                           description: The content of the message.
+ *                         timestamp:
+ *                           type: string
+ *                           format: date-time
+ *                           description: The time when the message was sent.
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The creation time of the conversation.
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The last update time of the conversation.
+ *                 example:
+ *                   - _id: "603e5e534cc7d52e2c2f7c90"
+ *                     user: "603e5e534cc7d52e2c2f7c90"
+ *                     title: "Conversation Title"
+ *                     messages:
+ *                       - sender: user
+ *                         text: "Hello"
+ *                         timestamp: "2023-02-06T00:00:00.000Z"
+ *                     createdAt: "2023-02-06T00:00:00.000Z"
+ *                     updatedAt: "2023-02-06T00:00:00.000Z"
  *       500:
  *         description: Internal server error.
  */
-router.get(
-  "/search/:query",
-  authenticateJWT,
-  async (req: AuthRequest, res: Response) => {
-    try {
-      const userId = req.user.id;
-      const query = req.params.query;
-      // Search by conversation title or within messages' text
-      const conversations = await Conversation.find({
-        user: userId,
-        $or: [
-          { title: { $regex: query, $options: "i" } },
-          { "messages.text": { $regex: query, $options: "i" } },
-        ],
-      });
-      res.json(conversations);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  },
-);
+router.get("/search/:query", authenticateJWT, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user.id;
+    const query = req.params.query;
+    // Search by conversation title or within messages' text
+    const conversations = await Conversation.find({
+      user: userId,
+      $or: [
+        { title: { $regex: query, $options: "i" } },
+        { "messages.text": { $regex: query, $options: "i" } },
+      ],
+    });
+    res.json(conversations);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 /**
  * @swagger
@@ -254,24 +461,20 @@ router.get(
  *       500:
  *         description: Internal server error.
  */
-router.delete(
-  "/:id",
-  authenticateJWT,
-  async (req: AuthRequest, res: Response) => {
-    try {
-      const userId = req.user.id;
-      const conversation = await Conversation.findOneAndDelete({
-        _id: req.params.id,
-        user: userId,
-      });
-      if (!conversation) {
-        return res.status(404).json({ message: "Conversation not found" });
-      }
-      res.json({ message: "Conversation deleted successfully" });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
+router.delete("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user.id;
+    const conversation = await Conversation.findOneAndDelete({
+      _id: req.params.id,
+      user: userId,
+    });
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
     }
-  },
-);
+    res.json({ message: "Conversation deleted successfully" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 export default router;
