@@ -1,5 +1,5 @@
 export interface IMessage {
-  sender: 'user' | 'assistant';
+  sender: "user" | "assistant";
   text: string;
   timestamp: Date;
 }

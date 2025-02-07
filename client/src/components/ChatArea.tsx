@@ -1,29 +1,39 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   TextField,
   IconButton,
   Typography,
   CircularProgress,
-  useTheme
-} from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { getConversationById, sendChatMessage, createNewConversation, isAuthenticated } from '../services/api';
-import { IMessage, IConversation } from '../types/conversation';
-import ReactMarkdown from 'react-markdown';
+  useTheme,
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import {
+  getConversationById,
+  sendChatMessage,
+  createNewConversation,
+  isAuthenticated,
+} from "../services/api";
+import { IMessage, IConversation } from "../types/conversation";
+import ReactMarkdown from "react-markdown";
 
 interface ChatAreaProps {
   conversationId: string | null;
   onNewConversation?: (conv: IConversation) => void;
 }
 
-const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }) => {
+const ChatArea: React.FC<ChatAreaProps> = ({
+  conversationId,
+  onNewConversation,
+}) => {
   const theme = useTheme();
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   // loadingState is used for sending a message.
-  const [loadingState, setLoadingState] = useState<'idle' | 'processing' | 'generating' | 'done'>('idle');
+  const [loadingState, setLoadingState] = useState<
+    "idle" | "processing" | "generating" | "done"
+  >("idle");
   // loadingConversation is used when loading a conversation from the API.
   const [loadingConversation, setLoadingConversation] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -61,33 +71,33 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
       }
 
       // Add the user's message.
-      setLoadingState('processing');
+      setLoadingState("processing");
       const userMessage: IMessage = {
-        sender: 'user',
+        sender: "user",
         text: input,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, userMessage]);
-      setInput('');
+      setMessages((prev) => [...prev, userMessage]);
+      setInput("");
 
       // Simulate a processing delay.
-      await new Promise(res => setTimeout(res, 500));
-      setLoadingState('generating');
+      await new Promise((res) => setTimeout(res, 500));
+      setLoadingState("generating");
 
       // Send the message to the API.
       const resp = await sendChatMessage(input, currentConvId);
 
       // Append the assistant's response.
       const botMessage: IMessage = {
-        sender: 'assistant',
+        sender: "assistant",
         text: resp.answer,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, botMessage]);
-      setLoadingState('done');
+      setMessages((prev) => [...prev, botMessage]);
+      setLoadingState("done");
     } catch (err) {
       console.error(err);
-      setLoadingState('done');
+      setLoadingState("done");
     }
   };
 
@@ -107,10 +117,15 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
         padding="1rem"
         ref={scrollRef}
         bgcolor={theme.palette.background.default}
-        sx={{ transition: 'background-color 0.3s ease' }}
+        sx={{ transition: "background-color 0.3s ease" }}
       >
         {loadingConversation && (
-          <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            mt={2}
+          >
             <CircularProgress size={24} />
             <Typography variant="caption" color="textSecondary" ml={1}>
               Loading Conversation...
@@ -120,20 +135,29 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
 
         {/* If no messages and not loading, show the placeholder */}
         {messages.length === 0 && !loadingConversation ? (
-          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100%">
-            <ChatBubbleOutlineIcon sx={{ fontSize: 80, color: theme.palette.text.secondary, mb: 2 }} />
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="100%"
+          >
+            <ChatBubbleOutlineIcon
+              sx={{ fontSize: 80, color: theme.palette.text.secondary, mb: 2 }}
+            />
             <Typography variant="h6" align="center" color="textSecondary">
-              Hello 👋 I'm Lumina - David Nguyen's personal assistant. How may I help you today? Send me a message to get started!
+              Hello 👋 I'm Lumina - David Nguyen's personal assistant. How may I
+              help you today? Send me a message to get started!
             </Typography>
           </Box>
         ) : (
           messages.map((msg, idx) => {
-            const isUser = msg.sender === 'user';
+            const isUser = msg.sender === "user";
             return (
               <Box
                 key={idx}
                 display="flex"
-                justifyContent={isUser ? 'flex-end' : 'flex-start'}
+                justifyContent={isUser ? "flex-end" : "flex-start"}
                 marginBottom="0.5rem"
               >
                 <Box
@@ -142,14 +166,27 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
                   bgcolor={
                     isUser
                       ? theme.palette.primary.main
-                      : theme.palette.mode === 'dark'
+                      : theme.palette.mode === "dark"
                         ? theme.palette.grey[800]
-                        : '#e0e0e0'
+                        : "#e0e0e0"
                   }
-                  color={isUser ? theme.palette.primary.contrastText : theme.palette.text.primary}
+                  color={
+                    isUser
+                      ? theme.palette.primary.contrastText
+                      : theme.palette.text.primary
+                  }
                   maxWidth="60%"
                   whiteSpace="pre-wrap"
                   boxShadow={1}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: isUser
+                        ? theme.palette.primary.dark
+                        : theme.palette.mode === "dark"
+                          ? theme.palette.grey[700]
+                          : "#d5d5d5",
+                    },
+                  }}
                 >
                   {isUser ? (
                     <Typography variant="body1">{msg.text}</Typography>
@@ -157,7 +194,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
                     <ReactMarkdown
                       components={{
                         li: ({ node, ...props }) => (
-                          <li style={{ marginBottom: '0.25rem', lineHeight: 1.5 }} {...props} />
+                          <li
+                            style={{ marginBottom: "0.25rem", lineHeight: 1.5 }}
+                            {...props}
+                          />
                         ),
                       }}
                     >
@@ -169,12 +209,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
             );
           })
         )}
-        {loadingState === 'processing' && (
+        {loadingState === "processing" && (
           <Typography variant="caption" color="textSecondary">
             Processing Message...
           </Typography>
         )}
-        {loadingState === 'generating' && (
+        {loadingState === "generating" && (
           <Box display="flex" alignItems="center" gap="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
@@ -196,7 +236,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               e.preventDefault();
               handleSendMessage();
             }
@@ -204,13 +244,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({ conversationId, onNewConversation }
           sx={{
             backgroundColor: theme.palette.background.paper,
             borderRadius: 1,
-            transition: 'background-color 0.3s ease'
+            transition: "background-color 0.3s ease",
           }}
         />
         <IconButton
           color="primary"
           onClick={handleSendMessage}
-          disabled={loadingState !== 'idle' && loadingState !== 'done'}
+          disabled={loadingState !== "idle" && loadingState !== "done"}
         >
           <SendIcon />
         </IconButton>

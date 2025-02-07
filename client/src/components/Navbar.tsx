@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from "react";
 import {
   AppBar,
   Toolbar,
@@ -9,52 +9,58 @@ import {
   Button,
   useMediaQuery,
   useTheme,
-  CircularProgress
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import LogoutIcon from '@mui/icons-material/Logout';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import { createNewConversation, searchConversations, isAuthenticated } from '../services/api';
-import { useNavigate } from 'react-router-dom';
-import { IConversation } from '../types/conversation';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+  CircularProgress,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AddCommentIcon from "@mui/icons-material/AddComment";
+import {
+  createNewConversation,
+  searchConversations,
+  isAuthenticated,
+} from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { IConversation } from "../types/conversation";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 interface NavbarProps {
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
   onRefreshConversations: () => void;
-  onSelectConversation: (id: string) => void;
+  onSelectConversation: (id: string | null) => void;
   onToggleTheme: () => void;
   darkMode: boolean;
   setConversations: React.Dispatch<React.SetStateAction<IConversation[]>>;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-                                         sidebarOpen,
-                                         onToggleSidebar,
-                                         onRefreshConversations,
-                                         onSelectConversation,
-                                         onToggleTheme,
-                                         darkMode,
-                                         setConversations
-                                       }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  sidebarOpen,
+  onToggleSidebar,
+  onRefreshConversations,
+  onSelectConversation,
+  onToggleTheme,
+  darkMode,
+  setConversations,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
+  const [newConvLoading, setNewConvLoading] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // A ref to store the debounce timer
+  // A ref to store the debounce timer.
   const debounceTimerRef = useRef<number | null>(null);
 
-  // Debounced search function (manual implementation)
+  /**
+   * Debounced search function to reduce API calls.
+   */
   const debouncedSearch = (value: string) => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
-    // Set a new debounce timer: 500ms delay
     debounceTimerRef.current = window.setTimeout(async () => {
       if (!value.trim()) {
         onRefreshConversations();
@@ -79,58 +85,93 @@ const Navbar: React.FC<NavbarProps> = ({
     debouncedSearch(value);
   };
 
+  /**
+   * Creates a new conversation via the backend if possible.
+   * If 401 is returned (user not authenticated), we still clear the local conversation,
+   * allowing them to start fresh in the UI.
+   */
   const handleCreateNewConversation = async () => {
+    setNewConvLoading(true);
     try {
       const newConv = await createNewConversation();
       onRefreshConversations();
       onSelectConversation(newConv._id);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      // If backend responds with 401 or any error, we still clear the local UI convo
+      onSelectConversation(null);
+      onRefreshConversations();
+      // For debugging
+      if (error.response && error.response.status === 401) {
+        console.warn(
+          "User is not authenticated, clearing conversation in UI only.",
+        );
+      } else {
+        console.error(error);
+      }
+
+      window.location.reload();
+    } finally {
+      setNewConvLoading(false);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
-  // Handle dark/light mode toggle and store the preference.
+  // Toggle Dark/Light Mode
   const handleToggleTheme = () => {
     onToggleTheme();
-    localStorage.setItem('darkMode', JSON.stringify(!darkMode));
+    localStorage.setItem("darkMode", JSON.stringify(!darkMode));
   };
 
   return (
-    <AppBar position="static" sx={{ transition: 'all 0.3s' }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+    <AppBar position="static" sx={{ transition: "all 0.3s" }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box display="flex" alignItems="center" flex="1">
           {/* Sidebar Toggle */}
-          <IconButton color="inherit" onClick={onToggleSidebar} edge="start" sx={{ mr: 1 }}>
+          <IconButton
+            color="inherit"
+            onClick={onToggleSidebar}
+            edge="start"
+            sx={{ mr: 1 }}
+          >
             <MenuIcon />
           </IconButton>
 
           {/* Dark/Light Mode Toggle */}
-          <IconButton color="inherit" onClick={handleToggleTheme} sx={{ mr: 1 }}>
+          <IconButton
+            color="inherit"
+            onClick={handleToggleTheme}
+            sx={{ mr: 1 }}
+          >
             {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
           </IconButton>
 
           {/* Search Bar */}
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: darkMode ? 'grey.800' : 'white',
-              color: 'black',
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: darkMode ? "grey.800" : "white",
+              color: "black",
               borderRadius: 1,
               padding: 1,
               flex: 1,
-              transition: 'all 0.3s',
+              transition: "all 0.3s",
             }}
           >
-            <SearchIcon sx={{ color: darkMode ? 'grey.200' : 'grey.700', mr: 1 }} />
+            <SearchIcon
+              sx={{ color: darkMode ? "grey.200" : "grey.700", mr: 1 }}
+            />
             <InputBase
               placeholder="Search for a Conversation..."
-              sx={{ borderRadius: 8, flex: 1, color: darkMode ? 'grey.200' : 'black' }}
+              sx={{
+                borderRadius: 8,
+                flex: 1,
+                color: darkMode ? "grey.200" : "black",
+              }}
               value={searchTerm}
               onChange={handleSearchChange}
             />
@@ -145,25 +186,30 @@ const Navbar: React.FC<NavbarProps> = ({
             color="inherit"
             onClick={handleCreateNewConversation}
             title="New Conversation"
+            disabled={newConvLoading}
           >
-            <AddCommentIcon />
+            {newConvLoading ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              <AddCommentIcon />
+            )}
           </IconButton>
 
           {/* Login/Signup or Logout */}
           {!isAuthenticated() && (
             <>
               <Button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 color="inherit"
-                sx={{ ml: 1, font: 'inherit', textTransform: 'none' }}
+                sx={{ ml: 1, font: "inherit", textTransform: "none" }}
                 title="Login"
               >
                 LOGIN
               </Button>
               <Button
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate("/signup")}
                 color="inherit"
-                sx={{ ml: 1, font: 'inherit', textTransform: 'none' }}
+                sx={{ ml: 1, font: "inherit", textTransform: "none" }}
                 title="Sign Up"
               >
                 REGISTER
@@ -171,7 +217,10 @@ const Navbar: React.FC<NavbarProps> = ({
             </>
           )}
           {isAuthenticated() && (
-            <IconButton onClick={handleLogout} sx={{ ml: 1, color: 'error.main' }}>
+            <IconButton
+              onClick={handleLogout}
+              sx={{ ml: 1, color: "error.main" }}
+            >
               <LogoutIcon />
             </IconButton>
           )}
@@ -179,7 +228,10 @@ const Navbar: React.FC<NavbarProps> = ({
 
         {/* Title on the Right */}
         {!isMobile && (
-          <Typography variant="h6" sx={{ ml: 2, fontSize: '22px' }}>
+          <Typography
+            variant="h6"
+            sx={{ ml: 2, fontSize: "22px", fontWeight: "bold" }}
+          >
             Lumina AI
           </Typography>
         )}

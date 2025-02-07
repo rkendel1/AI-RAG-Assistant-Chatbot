@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -11,17 +11,17 @@ import {
   Slide,
   Typography,
   useTheme,
-  useMediaQuery
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import FlashOnIcon from '@mui/icons-material/FlashOn';
-import SecurityIcon from '@mui/icons-material/Security';
+  useMediaQuery,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import FlashOnIcon from "@mui/icons-material/FlashOn";
+import SecurityIcon from "@mui/icons-material/Security";
 
 const LandingPage: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // States to trigger staggered animations.
   const [showHero, setShowHero] = useState(false);
@@ -43,57 +43,60 @@ const LandingPage: React.FC = () => {
   // Reusable style for icon container inside feature cards.
   const iconContainerStyle = {
     height: 140,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: theme.palette.mode === 'dark'
-      ? theme.palette.grey[800]
-      : theme.palette.grey[200],
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background:
+      theme.palette.mode === "dark"
+        ? theme.palette.grey[800]
+        : theme.palette.grey[200],
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
   };
 
   // Reusable style for each feature card.
   const cardStyle = {
-    height: '100%',
-    transition: 'transform 0.3s, box-shadow 0.3s',
-    '&:hover': {
-      transform: 'scale(1.03)',
+    height: "100%",
+    transition: "transform 0.3s, box-shadow 0.3s",
+    "&:hover": {
+      transform: "scale(1.03)",
       boxShadow: theme.shadows[6],
     },
     borderRadius: 2,
-    overflow: 'hidden'
+    overflow: "hidden",
   };
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        background: theme.palette.mode === 'dark'
-          ? theme.palette.grey[900]
-          : theme.palette.grey[100],
-        display: 'flex',
-        flexDirection: 'column',
-        overflowX: 'hidden'
+        minHeight: "100vh",
+        background:
+          theme.palette.mode === "dark"
+            ? theme.palette.grey[900]
+            : theme.palette.grey[100],
+        display: "flex",
+        flexDirection: "column",
+        overflowX: "hidden",
       }}
     >
       <Container maxWidth="lg" sx={{ pt: 6, pb: 6 }}>
         {/* Hero Section */}
         <Fade in={showHero} timeout={800}>
-          <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Box sx={{ textAlign: "center", py: 4 }}>
             <Grow in={showHero} timeout={800}>
               <Typography
-                variant={isMobile ? 'h3' : 'h2'}
+                variant={isMobile ? "h3" : "h2"}
                 component="h1"
                 gutterBottom
-                sx={{ fontWeight: 'bold' }}
+                sx={{ fontWeight: "bold" }}
               >
                 Welcome to David Nguyen's AI Assistant - Lumina!
               </Typography>
             </Grow>
             <Fade in={showHero} timeout={1200}>
               <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
-                Chat, save conversations, and get instant responses — all at your fingertips.
+                Chat, save conversations, and get instant responses — all at
+                your fingertips.
               </Typography>
             </Fade>
           </Box>
@@ -106,7 +109,7 @@ const LandingPage: React.FC = () => {
               variant="h4"
               align="center"
               gutterBottom
-              sx={{ fontWeight: 'bold', mb: 1 }}
+              sx={{ fontWeight: "bold", mb: 1 }}
             >
               What Lumina Can Do
             </Typography>
@@ -127,7 +130,7 @@ const LandingPage: React.FC = () => {
                       <ChatBubbleOutlineIcon
                         sx={{
                           fontSize: 60,
-                          color: theme.palette.primary.main
+                          color: theme.palette.primary.main,
                         }}
                       />
                     </Box>
@@ -151,7 +154,7 @@ const LandingPage: React.FC = () => {
                       <FlashOnIcon
                         sx={{
                           fontSize: 60,
-                          color: theme.palette.primary.main
+                          color: theme.palette.primary.main,
                         }}
                       />
                     </Box>
@@ -175,7 +178,7 @@ const LandingPage: React.FC = () => {
                       <SecurityIcon
                         sx={{
                           fontSize: 60,
-                          color: theme.palette.primary.main
+                          color: theme.palette.primary.main,
                         }}
                       />
                     </Box>
@@ -184,7 +187,8 @@ const LandingPage: React.FC = () => {
                         Secure & Reliable
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        Enjoy a safe environment with encrypted conversations and privacy.
+                        Enjoy a safe environment with encrypted conversations
+                        and privacy.
                       </Typography>
                     </CardContent>
                   </Card>
@@ -196,26 +200,38 @@ const LandingPage: React.FC = () => {
 
         {/* Call-to-Action Section */}
         <Fade in={showCTA} timeout={800}>
-          <Box sx={{ mt: 8, textAlign: 'center' }}>
-            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Box sx={{ mt: 8, textAlign: "center" }}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
               Get Started Now
             </Typography>
-            <Typography variant="subtitle1" color="textSecondary" sx={{ mb: 4 }}>
-              Create an account to save your conversations or continue as a guest.
+            <Typography
+              variant="subtitle1"
+              color="textSecondary"
+              sx={{ mb: 4 }}
+            >
+              Create an account to save your conversations or continue as a
+              guest.
             </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
               <Button
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate("/signup")}
                 sx={{
                   px: 4,
                   py: 1.5,
-                  fontWeight: 'bold',
+                  fontWeight: "bold",
                   borderRadius: 2,
-                  transition: 'transform 0.3s',
-                  '&:hover': { transform: 'scale(1.05)' }
+                  transition: "transform 0.3s",
+                  "&:hover": { transform: "scale(1.05)" },
                 }}
               >
                 Create Account
@@ -224,14 +240,14 @@ const LandingPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 size="large"
-                onClick={() => navigate('/chat')}
+                onClick={() => navigate("/chat")}
                 sx={{
                   px: 4,
                   py: 1.5,
-                  fontWeight: 'bold',
+                  fontWeight: "bold",
                   borderRadius: 2,
-                  transition: 'transform 0.3s',
-                  '&:hover': { transform: 'scale(1.05)' }
+                  transition: "transform 0.3s",
+                  "&:hover": { transform: "scale(1.05)" },
                 }}
               >
                 Continue as Guest
@@ -247,12 +263,13 @@ const LandingPage: React.FC = () => {
         sx={{
           py: 2,
           backgroundColor: theme.palette.background.paper,
-          textAlign: 'center',
-          mt: 'auto'
+          textAlign: "center",
+          mt: "auto",
         }}
       >
         <Typography variant="caption" color="textSecondary">
-          © {new Date().getFullYear()} David Nguyen's AI Assistant. All rights reserved.
+          © {new Date().getFullYear()} David Nguyen's AI Assistant. All rights
+          reserved.
         </Typography>
       </Box>
     </Box>

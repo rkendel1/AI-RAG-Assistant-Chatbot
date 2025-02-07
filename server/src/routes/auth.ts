@@ -1,8 +1,8 @@
-import express, { Request, Response } from 'express';
-import User, { IUser } from '../models/User';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import express, { Request, Response } from "express";
+import User, { IUser } from "../models/User";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 dotenv.config();
 
 const router = express.Router();
@@ -47,7 +47,7 @@ const router = express.Router();
  *       500:
  *         description: Server error.
  */
-router.post('/signup', async (req: Request, res: Response) => {
+router.post("/signup", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const existingUser: IUser | null = await User.findOne({ email });
@@ -103,7 +103,7 @@ router.post('/signup', async (req: Request, res: Response) => {
  *       500:
  *         description: Server error.
  */
-router.post('/login', async (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const user: IUser | null = await User.findOne({ email });
@@ -117,7 +117,7 @@ router.post('/login', async (req: Request, res: Response) => {
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET as string,
-      { expiresIn: '1d' }
+      { expiresIn: "1d" },
     );
     res.json({ token });
   } catch (error: any) {
@@ -156,11 +156,11 @@ router.post('/login', async (req: Request, res: Response) => {
  *       500:
  *         description: Server error.
  */
-router.get('/verify-email', async (req: Request, res: Response) => {
+router.get("/verify-email", async (req: Request, res: Response) => {
   try {
     const email = req.query.email;
-    if (!email || typeof email !== 'string') {
-      return res.status(400).json({ message: 'Email is required' });
+    if (!email || typeof email !== "string") {
+      return res.status(400).json({ message: "Email is required" });
     }
     const user = await User.findOne({ email });
     res.json({ exists: !!user });
@@ -209,20 +209,22 @@ router.get('/verify-email', async (req: Request, res: Response) => {
  *       500:
  *         description: Server error.
  */
-router.post('/reset-password', async (req: Request, res: Response) => {
+router.post("/reset-password", async (req: Request, res: Response) => {
   try {
     const { email, newPassword } = req.body;
     if (!email || !newPassword) {
-      return res.status(400).json({ message: 'Email and new password are required' });
+      return res
+        .status(400)
+        .json({ message: "Email and new password are required" });
     }
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'User does not exist' });
+      return res.status(400).json({ message: "User does not exist" });
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
-    res.json({ message: 'Password reset successfully' });
+    res.json({ message: "Password reset successfully" });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

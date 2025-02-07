@@ -1,4 +1,4 @@
-import {Fragment} from "react";
+import { Fragment } from "react";
 import {
   Category,
   Component,
@@ -12,16 +12,14 @@ export const PaletteTree = () => (
     <Category name="App">
       <Component name="Loader">
         <Variant>
-          <ExampleLoaderComponent/>
+          <ExampleLoaderComponent />
         </Variant>
       </Component>
     </Category>
-    <MUIPalette/>
+    <MUIPalette />
   </Palette>
 );
 
 export function ExampleLoaderComponent() {
-  return (
-    <Fragment>Loading...</Fragment>
-  );
+  return <Fragment>Loading...</Fragment>;
 }

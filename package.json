@@ -1,12 +1,15 @@
 {
   "name": "ai-assistant-chatbot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A chatbot for David Nguyen's personal AI assistant.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md,html}\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "prettier": "^3.4.2"
+  },
   "devDependencies": {
     "typescript": "^5.5.3"
   },

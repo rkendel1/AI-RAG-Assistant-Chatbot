@@ -1,33 +1,33 @@
 // @ts-nocheck
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
 
 export const lightTheme = createTheme({
   palette: {
-    mode: 'light',
+    mode: "light",
     primary: {
-      main: '#1976d2'
+      main: "#1976d2",
     },
     secondary: {
-      main: '#9c27b0'
-    }
+      main: "#9c27b0",
+    },
   },
   typography: {
-    fontFamily: 'Poppins, Arial'
-  }
+    fontFamily: "Poppins, Arial",
+  },
 });
 
 // @ts-ignore
 export const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#90caf9'
+      main: "#90caf9",
     },
     secondary: {
-      main: '#f48fb1'
-    }
+      main: "#f48fb1",
+    },
   },
   typography: {
-    fontFamily: 'Poppins, Arial'
-  }
+    fontFamily: "Poppins, Arial",
+  },
 });

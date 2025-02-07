@@ -1,7 +1,14 @@
-import React from 'react';
-import { Box, Button, Container, Fade, Typography, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import React from "react";
+import {
+  Box,
+  Button,
+  Container,
+  Fade,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const NotFoundPage: React.FC = () => {
   const theme = useTheme();
@@ -11,10 +18,10 @@ const NotFoundPage: React.FC = () => {
     <Fade in timeout={600}>
       <Box
         sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           // Create a subtle gradient background using the primary palette colors.
           background: `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.dark} 100%)`,
           p: 3,
@@ -23,7 +30,7 @@ const NotFoundPage: React.FC = () => {
         <Container
           maxWidth="sm"
           sx={{
-            textAlign: 'center',
+            textAlign: "center",
             backgroundColor: theme.palette.background.paper,
             p: 4,
             borderRadius: 2,
@@ -37,7 +44,7 @@ const NotFoundPage: React.FC = () => {
               mb: 2,
             }}
           />
-          <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <Typography variant="h2" sx={{ fontWeight: "bold", mb: 2 }}>
             404
           </Typography>
           <Typography variant="h5" sx={{ mb: 3 }}>
@@ -47,14 +54,14 @@ const NotFoundPage: React.FC = () => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             sx={{
               px: 4,
               py: 1.5,
-              fontWeight: 'bold',
+              fontWeight: "bold",
               borderRadius: 2,
-              transition: 'transform 0.3s',
-              '&:hover': { transform: 'scale(1.05)' },
+              transition: "transform 0.3s",
+              "&:hover": { transform: "scale(1.05)" },
             }}
           >
             Go Back Home

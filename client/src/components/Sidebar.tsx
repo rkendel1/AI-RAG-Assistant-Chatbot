@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   List,
@@ -7,13 +7,13 @@ import {
   Typography,
   IconButton,
   CircularProgress,
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { isAuthenticated } from '../services/api';
-import { IConversation } from '../types/conversation';
-import { useTheme } from '@mui/material/styles';
-import { renameConversation, deleteConversation } from '../services/api';
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { isAuthenticated } from "../services/api";
+import { IConversation } from "../types/conversation";
+import { useTheme } from "@mui/material/styles";
+import { renameConversation, deleteConversation } from "../services/api";
 
 interface SidebarProps {
   open: boolean;
@@ -25,32 +25,35 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-                                           open,
-                                           conversations,
-                                           onSelectConversation,
-                                           selectedConversationId,
-                                           onRefresh,
-                                           isMobile,
-                                         }) => {
+  open,
+  conversations,
+  onSelectConversation,
+  selectedConversationId,
+  onRefresh,
+  isMobile,
+}) => {
   const theme = useTheme();
   const [loadingRenameId, setLoadingRenameId] = useState<string | null>(null);
   const [loadingDeleteId, setLoadingDeleteId] = useState<string | null>(null);
 
   // On mobile, set the sidebar to full width but below the navbar (assume navbar height = 64px)
-  const widthValue = isMobile ? '100%' : '240px';
-  const positionValue = isMobile ? 'absolute' : 'relative';
-  const topValue = isMobile ? '64px' : 0; // adjust to match your Navbar's height
-  const heightValue = isMobile ? 'calc(100vh - 64px)' : 'auto';
+  const widthValue = isMobile ? "100%" : "240px";
+  const positionValue = isMobile ? "absolute" : "relative";
+  const topValue = isMobile ? "64px" : 0; // adjust to match your Navbar's height
+  const heightValue = isMobile ? "calc(100vh - 64px)" : "auto";
 
   const handleRename = async (convId: string, currentTitle: string) => {
-    const newTitle = window.prompt('Enter new conversation name:', currentTitle);
-    if (newTitle && newTitle.trim() !== '' && newTitle !== currentTitle) {
+    const newTitle = window.prompt(
+      "Enter new conversation name:",
+      currentTitle,
+    );
+    if (newTitle && newTitle.trim() !== "" && newTitle !== currentTitle) {
       try {
         setLoadingRenameId(convId);
         await renameConversation(convId, newTitle);
         onRefresh(); // refresh conversation list after renaming
       } catch (error) {
-        console.error('Failed to rename conversation', error);
+        console.error("Failed to rename conversation", error);
       } finally {
         setLoadingRenameId(null);
       }
@@ -58,14 +61,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleDelete = async (convId: string) => {
-    const confirmed = window.confirm('Are you sure you want to delete this conversation?');
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this conversation?",
+    );
     if (!confirmed) return;
     try {
       setLoadingDeleteId(convId);
       await deleteConversation(convId);
       onRefresh(); // refresh conversation list after deletion
     } catch (error) {
-      console.error('Failed to delete conversation', error);
+      console.error("Failed to delete conversation", error);
     } finally {
       setLoadingDeleteId(null);
     }
@@ -79,11 +84,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         left: 0,
         height: heightValue,
         width: open ? widthValue : 0,
-        borderRight: isMobile ? 'none' : `1px solid ${theme.palette.divider}`,
-        overflowY: 'auto',
-        transition: 'width 0.3s ease-in-out, left 0.3s ease-in-out',
+        borderRight: isMobile ? "none" : `1px solid ${theme.palette.divider}`,
+        overflowY: "auto",
+        transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
         backgroundColor: theme.palette.background.paper,
-        zIndex: isMobile ? 1200 : 'auto', // Overlay on mobile
+        zIndex: isMobile ? 1200 : "auto", // Overlay on mobile
         boxShadow: isMobile && open ? 5 : 0,
       }}
     >
@@ -94,7 +99,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               key={conv._id}
               selected={conv._id === selectedConversationId}
               onClick={() => onSelectConversation(conv._id)}
-              sx={{ justifyContent: 'space-between' }}
+              sx={{ justifyContent: "space-between" }}
             >
               <ListItemText
                 primary={conv.title}
@@ -102,14 +107,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                   noWrap: true, // This will clip the text and add ellipsis if it's too long
                   sx: {
                     color:
-                      theme.palette.mode === 'dark'
+                      theme.palette.mode === "dark"
                         ? theme.palette.common.white
                         : theme.palette.text.primary,
                   },
                 }}
                 sx={{ minWidth: 0 }} // Ensures proper shrinking in flex layout
               />
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <IconButton
                   edge="end"
                   size="small"

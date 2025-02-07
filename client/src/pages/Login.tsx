@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { Box, Paper, Typography, TextField, Button, IconButton, InputAdornment, CircularProgress } from '@mui/material';
-import { loginUser, setTokenInLocalStorage } from '../services/api';
-import { useNavigate } from 'react-router-dom';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import React, { useState } from "react";
+import {
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  InputAdornment,
+  CircularProgress,
+} from "@mui/material";
+import { loginUser, setTokenInLocalStorage } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);
 
@@ -18,7 +27,7 @@ const Login: React.FC = () => {
     try {
       const token = await loginUser(email, password);
       setTokenInLocalStorage(token);
-      navigate('/chat');
+      navigate("/chat");
     } catch (err: any) {
       alert(err?.response?.data?.message || err.message);
     } finally {
@@ -27,8 +36,13 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Box display="flex" height="100vh" justifyContent="center" alignItems="center">
-      <Paper style={{ padding: '2rem', maxWidth: 400, width: '100%' }}>
+    <Box
+      display="flex"
+      height="100vh"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Paper style={{ padding: "2rem", maxWidth: 400, width: "100%" }}>
         <Typography variant="h5" marginBottom="1rem">
           Login
         </Typography>
@@ -37,7 +51,7 @@ const Login: React.FC = () => {
           label="Email"
           margin="normal"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           disabled={loadingLogin}
         />
         <TextField
@@ -46,16 +60,19 @@ const Login: React.FC = () => {
           margin="normal"
           type={showPw ? "text" : "password"}
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           disabled={loadingLogin}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPw(!showPw)} disabled={loadingLogin}>
+                <IconButton
+                  onClick={() => setShowPw(!showPw)}
+                  disabled={loadingLogin}
+                >
                   {showPw ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-            )
+            ),
           }}
         />
         <Button
@@ -63,27 +80,39 @@ const Login: React.FC = () => {
           color="primary"
           fullWidth
           onClick={handleLogin}
-          style={{ marginTop: '1rem' }}
-          disabled={loadingLogin || email.trim() === '' || password.trim() === ''}
+          style={{ marginTop: "1rem" }}
+          disabled={
+            loadingLogin || email.trim() === "" || password.trim() === ""
+          }
         >
-          {loadingLogin ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+          {loadingLogin ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Login"
+          )}
         </Button>
         <Box marginTop="1rem">
           <Typography variant="body2">
-            Don't have an account?{' '}
-            <Button onClick={() => navigate('/signup')} color="primary">
+            Don't have an account?{" "}
+            <Button onClick={() => navigate("/signup")} color="primary">
               Sign Up
             </Button>
           </Typography>
           <Typography variant="body2">
-            Don't want to login?{' '}
-            <Button style={{ color: 'green' }} onClick={() => navigate('/chat')}>
+            Don't want to login?{" "}
+            <Button
+              style={{ color: "green" }}
+              onClick={() => navigate("/chat")}
+            >
               Continue as Guest
             </Button>
           </Typography>
           <Typography variant="body2">
-            Forgot your password?{' '}
-            <Button style={{ color: 'red' }} onClick={() => navigate('/forgot-password')}>
+            Forgot your password?{" "}
+            <Button
+              style={{ color: "red" }}
+              onClick={() => navigate("/forgot-password")}
+            >
               Reset Password
             </Button>
           </Typography>

@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express';
-import { authenticateJWT, AuthRequest } from '../middleware/auth';
-import Conversation, { IConversation, IMessage } from '../models/Conversation';
+import express, { Request, Response } from "express";
+import { authenticateJWT, AuthRequest } from "../middleware/auth";
+import Conversation, { IConversation, IMessage } from "../models/Conversation";
 
 const router = express.Router();
 
@@ -24,13 +24,13 @@ const router = express.Router();
  *       500:
  *         description: Internal server error.
  */
-router.post('/', authenticateJWT, async (req: AuthRequest, res: Response) => {
+router.post("/", authenticateJWT, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
     const conversation = new Conversation({
       user: userId,
       title: "New Conversation",
-      messages: []
+      messages: [],
     });
     await conversation.save();
     res.json(conversation);
@@ -60,7 +60,7 @@ router.post('/', authenticateJWT, async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.get('/', authenticateJWT, async (req: AuthRequest, res: Response) => {
+router.get("/", authenticateJWT, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
     const conversations = await Conversation.find({ user: userId });
@@ -98,10 +98,13 @@ router.get('/', authenticateJWT, async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.get('/:id', authenticateJWT, async (req: AuthRequest, res: Response) => {
+router.get("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
-    const conversation = await Conversation.findOne({ _id: req.params.id, user: userId });
+    const conversation = await Conversation.findOne({
+      _id: req.params.id,
+      user: userId,
+    });
     if (!conversation) {
       return res.status(404).json({ message: "Conversation not found" });
     }
@@ -151,14 +154,14 @@ router.get('/:id', authenticateJWT, async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.put('/:id', authenticateJWT, async (req: AuthRequest, res: Response) => {
+router.put("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
     const { title } = req.body;
     const conversation = await Conversation.findOneAndUpdate(
       { _id: req.params.id, user: userId },
       { title },
-      { new: true }
+      { new: true },
     );
     if (!conversation) {
       return res.status(404).json({ message: "Conversation not found" });
@@ -197,23 +200,27 @@ router.put('/:id', authenticateJWT, async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.get('/search/:query', authenticateJWT, async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = req.user.id;
-    const query = req.params.query;
-    // Search by conversation title or within messages' text
-    const conversations = await Conversation.find({
-      user: userId,
-      $or: [
-        { title: { $regex: query, $options: 'i' } },
-        { "messages.text": { $regex: query, $options: 'i' } }
-      ]
-    });
-    res.json(conversations);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.get(
+  "/search/:query",
+  authenticateJWT,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user.id;
+      const query = req.params.query;
+      // Search by conversation title or within messages' text
+      const conversations = await Conversation.find({
+        user: userId,
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { "messages.text": { $regex: query, $options: "i" } },
+        ],
+      });
+      res.json(conversations);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+);
 
 /**
  * @swagger
@@ -247,17 +254,24 @@ router.get('/search/:query', authenticateJWT, async (req: AuthRequest, res: Resp
  *       500:
  *         description: Internal server error.
  */
-router.delete('/:id', authenticateJWT, async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = req.user.id;
-    const conversation = await Conversation.findOneAndDelete({ _id: req.params.id, user: userId });
-    if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
+router.delete(
+  "/:id",
+  authenticateJWT,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user.id;
+      const conversation = await Conversation.findOneAndDelete({
+        _id: req.params.id,
+        user: userId,
+      });
+      if (!conversation) {
+        return res.status(404).json({ message: "Conversation not found" });
+      }
+      res.json({ message: "Conversation deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
-    res.json({ message: "Conversation deleted successfully" });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  },
+);
 
 export default router;

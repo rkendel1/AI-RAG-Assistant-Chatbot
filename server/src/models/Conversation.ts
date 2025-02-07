@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 /**
  * @swagger
@@ -63,7 +63,7 @@ import mongoose, { Schema, Document } from 'mongoose';
  */
 
 export interface IMessage {
-  sender: 'user' | 'assistant';
+  sender: "user" | "assistant";
   text: string;
   timestamp: Date;
 }
@@ -77,18 +77,21 @@ export interface IConversation extends Document {
 }
 
 const MessageSchema: Schema = new Schema({
-  sender: { type: String, enum: ['user', 'assistant'], required: true },
+  sender: { type: String, enum: ["user", "assistant"], required: true },
   text: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now },
 });
 
 const ConversationSchema: Schema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, default: "New Conversation" },
-    messages: [MessageSchema]
+    messages: [MessageSchema],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model<IConversation>('Conversation', ConversationSchema);
+export default mongoose.model<IConversation>(
+  "Conversation",
+  ConversationSchema,
+);

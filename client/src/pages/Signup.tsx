@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Paper,
@@ -7,17 +7,17 @@ import {
   Button,
   IconButton,
   InputAdornment,
-  CircularProgress
-} from '@mui/material';
-import { signupUser, setTokenInLocalStorage, loginUser } from '../services/api';
-import { useNavigate } from 'react-router-dom';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+  CircularProgress,
+} from "@mui/material";
+import { signupUser, setTokenInLocalStorage, loginUser } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const Signup: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [loadingSignup, setLoadingSignup] = useState(false);
@@ -35,7 +35,7 @@ const Signup: React.FC = () => {
       // Automatically log in after sign up.
       const token = await loginUser(email, password);
       setTokenInLocalStorage(token);
-      navigate('/');
+      navigate("/");
     } catch (err: any) {
       alert(err?.response?.data?.message || err.message);
     } finally {
@@ -44,8 +44,13 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <Box display="flex" height="100vh" justifyContent="center" alignItems="center">
-      <Paper style={{ padding: '2rem', maxWidth: 400, width: '100%' }}>
+    <Box
+      display="flex"
+      height="100vh"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Paper style={{ padding: "2rem", maxWidth: 400, width: "100%" }}>
         <Typography variant="h5" marginBottom="1rem">
           Sign Up
         </Typography>
@@ -54,7 +59,7 @@ const Signup: React.FC = () => {
           label="Email"
           margin="normal"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           disabled={loadingSignup}
         />
         <TextField
@@ -63,16 +68,19 @@ const Signup: React.FC = () => {
           margin="normal"
           type={showPw ? "text" : "password"}
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           disabled={loadingSignup}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPw(!showPw)} disabled={loadingSignup}>
+                <IconButton
+                  onClick={() => setShowPw(!showPw)}
+                  disabled={loadingSignup}
+                >
                   {showPw ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-            )
+            ),
           }}
         />
         <TextField
@@ -81,16 +89,19 @@ const Signup: React.FC = () => {
           margin="normal"
           type={showConfirmPw ? "text" : "password"}
           value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           disabled={loadingSignup}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowConfirmPw(!showConfirmPw)} disabled={loadingSignup}>
+                <IconButton
+                  onClick={() => setShowConfirmPw(!showConfirmPw)}
+                  disabled={loadingSignup}
+                >
                   {showConfirmPw ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-            )
+            ),
           }}
         />
         <Button
@@ -98,23 +109,42 @@ const Signup: React.FC = () => {
           color="primary"
           fullWidth
           onClick={handleSignup}
-          style={{ marginTop: '1rem' }}
-          disabled={loadingSignup || email.trim() === '' || password.trim() === '' || confirmPassword.trim() === ''}
+          style={{ marginTop: "1rem" }}
+          disabled={
+            loadingSignup ||
+            email.trim() === "" ||
+            password.trim() === "" ||
+            confirmPassword.trim() === ""
+          }
         >
-          {loadingSignup ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+          {loadingSignup ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Sign Up"
+          )}
         </Button>
         <Box marginTop="1rem">
           <Typography variant="body2">
-            Already have an account?{' '}
-            <Button onClick={() => navigate('/login')}>Login</Button>
+            Already have an account?{" "}
+            <Button onClick={() => navigate("/login")}>Login</Button>
           </Typography>
           <Typography variant="body2">
-            Don't want to login?{' '}
-            <Button style={{ color: 'green' }} onClick={() => navigate('/chat')}>Continue as Guest</Button>
+            Don't want to login?{" "}
+            <Button
+              style={{ color: "green" }}
+              onClick={() => navigate("/chat")}
+            >
+              Continue as Guest
+            </Button>
           </Typography>
           <Typography variant="body2">
-            Forgot your password?{' '}
-            <Button style={{ color: 'red' }} onClick={() => navigate('/forgot-password')}>Reset Password</Button>
+            Forgot your password?{" "}
+            <Button
+              style={{ color: "red" }}
+              onClick={() => navigate("/forgot-password")}
+            >
+              Reset Password
+            </Button>
           </Typography>
         </Box>
       </Paper>

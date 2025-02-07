@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Box, useMediaQuery, useTheme } from '@mui/material';
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
-import ChatArea from '../components/ChatArea';
-import { getConversations, isAuthenticated } from '../services/api';
-import { IConversation } from '../types/conversation';
+import React, { useState, useEffect } from "react";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import ChatArea from "../components/ChatArea";
+import { getConversations, isAuthenticated } from "../services/api";
+import { IConversation } from "../types/conversation";
 
 interface HomeProps {
   onToggleTheme: () => void;
@@ -14,10 +14,12 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [conversations, setConversations] = useState<IConversation[]>([]);
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    string | null
+  >(null);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     // On mobile, default the sidebar to closed; on desktop open it.
@@ -49,7 +51,8 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
     loadConversations();
   }, []);
 
-  const handleSelectConversation = (id: string) => {
+  // Updated to accept string | null
+  const handleSelectConversation = (id: string | null) => {
     setSelectedConversationId(id);
   };
 
@@ -65,7 +68,7 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
       flexDirection="column"
       height="100vh"
       bgcolor={theme.palette.background.default}
-      sx={{ transition: 'background-color 0.3s ease' }}
+      sx={{ transition: "background-color 0.3s ease" }}
     >
       <Navbar
         sidebarOpen={sidebarOpen}

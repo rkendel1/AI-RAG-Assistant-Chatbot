@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Paper,
@@ -7,35 +7,35 @@ import {
   Button,
   IconButton,
   InputAdornment,
-  CircularProgress
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { verifyEmail, resetPassword } from '../services/api';
+  CircularProgress,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { verifyEmail, resetPassword } from "../services/api";
 
 const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loadingVerify, setLoadingVerify] = useState(false);
   const [loadingReset, setLoadingReset] = useState(false);
 
   const navigate = useNavigate();
 
   const handleVerifyEmail = async () => {
-    setError('');
+    setError("");
     setLoadingVerify(true);
     try {
       const response = await verifyEmail(email); // Should return { exists: boolean }
       if (response.exists) {
         setEmailVerified(true);
       } else {
-        setError('Email not found');
+        setError("Email not found");
       }
     } catch (err: any) {
       setError(err?.response?.data?.message || err.message);
@@ -44,16 +44,18 @@ const ForgotPassword: React.FC = () => {
   };
 
   const handleResetPassword = async () => {
-    setError('');
+    setError("");
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
     setLoadingReset(true);
     try {
       await resetPassword(email, newPassword);
-      alert('Password reset successfully. Please login with your new password.');
-      navigate('/login');
+      alert(
+        "Password reset successfully. Please login with your new password.",
+      );
+      navigate("/login");
     } catch (err: any) {
       setError(err?.response?.data?.message || err.message);
     }
@@ -61,8 +63,13 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <Box display="flex" height="100vh" justifyContent="center" alignItems="center">
-      <Paper style={{ padding: '2rem', maxWidth: 400, width: '100%' }}>
+    <Box
+      display="flex"
+      height="100vh"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Paper style={{ padding: "2rem", maxWidth: 400, width: "100%" }}>
         <Typography variant="h5" marginBottom="1rem">
           Forgot Password
         </Typography>
@@ -86,13 +93,13 @@ const ForgotPassword: React.FC = () => {
               color="primary"
               fullWidth
               onClick={handleVerifyEmail}
-              style={{ marginTop: '1rem' }}
-              disabled={loadingVerify || email.trim() === ''}
+              style={{ marginTop: "1rem" }}
+              disabled={loadingVerify || email.trim() === ""}
             >
               {loadingVerify ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
-                'Verify Email'
+                "Verify Email"
               )}
             </Button>
           </>
@@ -102,7 +109,7 @@ const ForgotPassword: React.FC = () => {
               fullWidth
               label="New Password"
               margin="normal"
-              type={showNewPassword ? 'text' : 'password'}
+              type={showNewPassword ? "text" : "password"}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               disabled={loadingReset}
@@ -124,7 +131,7 @@ const ForgotPassword: React.FC = () => {
               fullWidth
               label="Confirm New Password"
               margin="normal"
-              type={showConfirmPassword ? 'text' : 'password'}
+              type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={loadingReset}
@@ -152,27 +159,35 @@ const ForgotPassword: React.FC = () => {
               color="primary"
               fullWidth
               onClick={handleResetPassword}
-              style={{ marginTop: '1rem' }}
-              disabled={loadingReset || newPassword.trim() === '' || confirmPassword.trim() === ''}
+              style={{ marginTop: "1rem" }}
+              disabled={
+                loadingReset ||
+                newPassword.trim() === "" ||
+                confirmPassword.trim() === ""
+              }
             >
               {loadingReset ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
-                'Reset Password'
+                "Reset Password"
               )}
             </Button>
           </>
         )}
         <Box marginTop="1rem">
           <Typography variant="body2">
-            Remembered your password?{' '}
-            <Button onClick={() => navigate('/login')} color="primary">
+            Remembered your password?{" "}
+            <Button onClick={() => navigate("/login")} color="primary">
               Login
             </Button>
           </Typography>
           <Typography variant="body2">
-            Continue as Guest?{' '}
-            <Button style={{ 'color': 'green' }} onClick={() => navigate('/chat')} color="primary">
+            Continue as Guest?{" "}
+            <Button
+              style={{ color: "green" }}
+              onClick={() => navigate("/chat")}
+              color="primary"
+            >
               Back to Chat
             </Button>
           </Typography>

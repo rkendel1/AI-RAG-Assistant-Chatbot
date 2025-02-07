@@ -1,11 +1,10 @@
-// src/services/geminiService.ts
 import {
   GoogleGenerativeAI,
   HarmCategory,
   HarmBlockThreshold,
-  GenerationConfig
-} from '@google/generative-ai';
-import dotenv from 'dotenv';
+  GenerationConfig,
+} from "@google/generative-ai";
+import dotenv from "dotenv";
 dotenv.config();
 
 /**
@@ -18,7 +17,7 @@ dotenv.config();
 export const chatWithAI = async (
   history: Array<any>,
   message: string,
-  systemInstruction?: string
+  systemInstruction?: string,
 ): Promise<string> => {
   // Check env vars
   if (!process.env.GOOGLE_AI_API_KEY) {
@@ -29,12 +28,14 @@ export const chatWithAI = async (
   }
 
   // Combine optional system instruction with your env instructions
-  const fullSystemInstruction = (systemInstruction ? systemInstruction + ' ' : '');
+  const fullSystemInstruction = systemInstruction
+    ? systemInstruction + " "
+    : "";
 
   // Initialize the model
   const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: "gemini-1.5-flash",
     // @ts-ignore: The official types might not show systemInstruction, but it works
     systemInstruction: fullSystemInstruction,
   });
@@ -49,10 +50,22 @@ export const chatWithAI = async (
 
   // Set up safety settings similarly
   const safetySettings = [
-    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+    {
+      category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+      threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+      threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+      threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+      threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
   ];
 
   // Create the chat session with conversation history

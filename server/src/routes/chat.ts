@@ -1,8 +1,11 @@
-import express, { Request, Response } from 'express';
-import Conversation, { IMessage } from '../models/Conversation';
-import { chatWithAI } from '../services/geminiService';
-import jwt from 'jsonwebtoken';
-import { ephemeralStore, createEphemeralConversation } from '../utils/ephemeralConversations';
+import express, { Request, Response } from "express";
+import Conversation, { IMessage } from "../models/Conversation";
+import { chatWithAI } from "../services/geminiService";
+import jwt from "jsonwebtoken";
+import {
+  ephemeralStore,
+  createEphemeralConversation,
+} from "../utils/ephemeralConversations";
 
 const router = express.Router();
 
@@ -52,10 +55,10 @@ const router = express.Router();
  *       500:
  *         description: Server error.
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const { message, conversationId } = req.body;
-    if (!message || typeof message !== 'string') {
+    if (!message || typeof message !== "string") {
       return res.status(400).json({ message: "Invalid or empty message." });
     }
 
@@ -63,9 +66,11 @@ router.post('/', async (req: Request, res: Response) => {
     let userId: string | null = null;
     const authHeader = req.headers.authorization;
     if (authHeader) {
-      const token = authHeader.split(' ')[1];
+      const token = authHeader.split(" ")[1];
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id?: string };
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+          id?: string;
+        };
         if (decoded && decoded.id) userId = decoded.id;
       } catch {
         userId = null;
@@ -81,49 +86,57 @@ router.post('/', async (req: Request, res: Response) => {
 
       if (conversationId) {
         // Load existing conversation
-        conversation = await Conversation.findOne({ _id: conversationId, user: userId });
+        conversation = await Conversation.findOne({
+          _id: conversationId,
+          user: userId,
+        });
         if (!conversation) {
           return res.status(404).json({ message: "Conversation not found" });
         }
         // Convert stored messages to the format your AI needs
         history = conversation.messages.map((msg: IMessage) => ({
-          role: msg.sender === 'user' ? 'user' : 'assistant',
-          parts: [{ text: msg.text }]
+          role: msg.sender === "user" ? "user" : "assistant",
+          parts: [{ text: msg.text }],
         }));
       } else {
         // Create a new conversation
         conversation = new Conversation({ user: userId, messages: [] });
         await conversation.save();
+        history = [];
       }
 
+      // Always prepend AI_INSTRUCTIONS at the start of the history.
+      // If instructions are already present as the first message, you may want to avoid duplicating them.
+      // For simplicity, we unconditionally prepend them.
+      history.unshift({
+        role: "user",
+        parts: [{ text: process.env.AI_INSTRUCTIONS || "" }],
+      });
       // Append the new user message
       history.push({ role: "user", parts: [{ text: message }] });
 
-      history.push({ role: "user", parts: [{ text: process.env.AI_INSTRUCTIONS || "" }] });
-
-      // Get AI response
+      // Call the AI service with the history
       const aiResponse = await chatWithAI(history, message);
 
-      // Create an IMessage for the DB
+      // Create an IMessage for the DB for the assistant's response
       const assistantMessage: IMessage = {
-        sender: 'assistant',
+        sender: "assistant",
         text: aiResponse,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // Save both user and assistant messages in the DB
       conversation.messages.push({
-        sender: 'user',
+        sender: "user",
         text: message,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
       conversation.messages.push(assistantMessage);
       await conversation.save();
 
-      // Return the AI response + conversationId
       return res.json({
         answer: aiResponse,
-        conversationId: conversation._id  // important for subsequent calls
+        conversationId: conversation._id,
       });
     }
 
@@ -132,39 +145,37 @@ router.post('/', async (req: Request, res: Response) => {
     // -----------------------------------------------------------
     let ephemeralHistory: any[];
 
-    // If we have a conversationId from the client, try loading it
     if (conversationId && ephemeralStore[conversationId]) {
       ephemeralHistory = ephemeralStore[conversationId];
     } else {
-      // Otherwise, create a new ephemeral convo
+      // Create a new ephemeral conversation
       const newConvId = createEphemeralConversation();
-      // Return the new ID to the client so they can reuse it
       return handleNewGuestConversation(res, newConvId, message);
     }
 
-    // ephemeralHistory is an array of { role, parts[] }
+    // Always prepend AI_INSTRUCTIONS at the start of the ephemeral history.
+    ephemeralHistory.unshift({
+      role: "user",
+      parts: [{ text: process.env.AI_INSTRUCTIONS || "" }],
+    });
     // Add the new user message
     ephemeralHistory.push({ role: "user", parts: [{ text: message }] });
 
-    ephemeralHistory.push({ role: "user", parts: [{ text: process.env.AI_INSTRUCTIONS || "" }] });
-
-    // Use your AI service
+    // Call the AI service with the ephemeral history.
     const aiResponse = await chatWithAI(ephemeralHistory, message);
 
-    // Store assistant message
+    // Append the AI response to ephemeral history
     ephemeralHistory.push({
       role: "assistant",
-      parts: [{ text: aiResponse }]
+      parts: [{ text: aiResponse }],
     });
 
     ephemeralStore[conversationId] = ephemeralHistory;
 
-    // Return AI response + the same ephemeral conversationId
     return res.json({
       answer: aiResponse,
-      conversationId // so the client can keep re-using it
+      conversationId,
     });
-
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -172,31 +183,38 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 /**
- * Helper to handle brand-new guest conversations:
- * Creates an ephemeral conversation, stores the initial user message, calls the AI, etc.
+ * Helper to handle brand-new guest conversations.
  */
-async function handleNewGuestConversation(res: Response, conversationId: string, message: string) {
-  // Start an empty ephemeral history
+async function handleNewGuestConversation(
+  res: Response,
+  conversationId: string,
+  message: string,
+) {
   let ephemeralHistory: any[] = [];
   ephemeralStore[conversationId] = ephemeralHistory;
 
+  // Prepend the AI instructions first
+  ephemeralHistory.unshift({
+    role: "user",
+    parts: [{ text: process.env.AI_INSTRUCTIONS || "" }],
+  });
   // Add the user's message
   ephemeralHistory.push({ role: "user", parts: [{ text: message }] });
 
-  // Get AI response
+  // Call the AI service
   const aiResponse = await chatWithAI(ephemeralHistory, message);
 
-  // Add the AI response to ephemeral memory
+  // Append the AI's response to the ephemeral history
   ephemeralHistory.push({
     role: "assistant",
-    parts: [{ text: aiResponse }]
+    parts: [{ text: aiResponse }],
   });
 
   ephemeralStore[conversationId] = ephemeralHistory;
 
   return res.json({
     answer: aiResponse,
-    conversationId
+    conversationId,
   });
 }
 
