@@ -374,6 +374,7 @@ To view the API documentation, you can use tools like Swagger UI or Postman to i
 This project is licensed under the [MIT License](LICENSE).
 
 ---
+
 Thank you for checking out the AI Assistant Project! If you have any questions or feedback, feel free to reach out. Happy coding! 🚗
 
 [⬆️ Back to Top](#table-of-contents)
