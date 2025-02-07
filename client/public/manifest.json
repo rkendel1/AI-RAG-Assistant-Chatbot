@@ -1,0 +1,21 @@
+{
+  "short_name": "Lumina",
+  "name": "Lumina - David Nguyen's Personal AI Assistant",
+  "description": "A personal AI assistant that helps answer all questions about David Nguyen and more.",
+  "icons": [
+    {
+      "src": "android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff"
+}
