@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   // On mobile, set the sidebar to full width but below the navbar (assume navbar height = 64px)
   const widthValue = isMobile ? "100%" : "240px";
   const positionValue = isMobile ? "absolute" : "relative";
-  const topValue = isMobile ? "64px" : 0; // adjust to match your Navbar's height
+  const topValue = isMobile ? "56px" : 0;
   const heightValue = isMobile ? "calc(100vh - 64px)" : "auto";
 
   const handleRename = async (convId: string, currentTitle: string) => {

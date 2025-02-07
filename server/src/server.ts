@@ -23,12 +23,14 @@ app.use((req, res, next) => {
 
 // Middleware
 const corsOptions = {
-  origin: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
+  origin: "*", // Allow all origins
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false // Must be false if using '*'
 };
 
 app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // Connect to MongoDB
