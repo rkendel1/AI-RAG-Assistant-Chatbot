@@ -94,6 +94,11 @@ const Navbar: React.FC<NavbarProps> = ({
    */
   const handleCreateNewConversation = async () => {
     setNewConvLoading(true);
+
+    if (localStorage.getItem("guestConversationId")) {
+      localStorage.removeItem("guestConversationId");
+    }
+
     try {
       const newConv = await createNewConversation();
       onRefreshConversations();

@@ -87,6 +87,7 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
           selectedConversationId={selectedConversationId}
           onRefresh={loadConversations}
           isMobile={isMobile}
+          loadingConversations={conversations.length === 0 && isAuthenticated()}
         />
         <Box flex="1">
           <ChatArea

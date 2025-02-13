@@ -50,9 +50,9 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "AI Assistant API",
+      title: "Lumina AI Assistant API",
       version: "1.1.0",
-      description: "API documentation for the AI Assistant application.",
+      description: "API documentation for the Lumina AI Assistant application.",
       contact: {
         name: "David Nguyen",
         url: "https://sonnguyenhoang.com/",
@@ -87,7 +87,12 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./src/routes/*.ts", "./src/routes/*.js", "./src/models/*.js"],
+  apis: [
+    "./src/routes/*.ts",
+    "./src/routes/*.js",
+    "./src/models/*.ts",
+    "./src/models/*.js",
+  ],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -105,7 +110,7 @@ app.get("/docs", (req, res) => {
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <title>AI Assistant API Docs</title>
+      <title>Lumina AI Assistant API Docs</title>
       <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css">
     </head>
     <body>
@@ -140,10 +145,12 @@ app.get("/", (req, res) => {
 import authRoutes from "./routes/auth";
 import conversationRoutes from "./routes/conversations";
 import chatRoutes from "./routes/chat";
+import guestRoutes from "./routes/guest";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/conversations", conversationRoutes);
-app.use("/api/chat", chatRoutes);
+app.use("/api/chat/auth", chatRoutes);
+app.use("/api/chat/guest", guestRoutes);
 
 /*
  * IMPORTANT:

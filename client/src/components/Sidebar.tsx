@@ -22,6 +22,7 @@ interface SidebarProps {
   selectedConversationId: string | null;
   onRefresh: () => void;
   isMobile: boolean;
+  loadingConversations: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -31,6 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedConversationId,
   onRefresh,
   isMobile,
+  loadingConversations,
 }) => {
   const theme = useTheme();
   const [loadingRenameId, setLoadingRenameId] = useState<string | null>(null);
@@ -86,12 +88,18 @@ const Sidebar: React.FC<SidebarProps> = ({
         width: open ? widthValue : 0,
         borderRight: isMobile ? "none" : `1px solid ${theme.palette.divider}`,
         overflowY: "auto",
-        transition: "width 0.3s ease-in-out, left 0.3s ease-in-out",
+        transition:
+          "width 0.3s ease-in-out, left 0.3s ease-in-out, background-color 0.3s ease",
         backgroundColor: theme.palette.background.paper,
         zIndex: isMobile ? 1200 : "auto", // Overlay on mobile
         boxShadow: isMobile && open ? 5 : 0,
       }}
     >
+      {loadingConversations ? (
+        <Box textAlign="center" padding="1rem">
+          <CircularProgress />
+        </Box>
+      ) : null}
       {isAuthenticated() ? (
         <List>
           {conversations.map((conv) => (

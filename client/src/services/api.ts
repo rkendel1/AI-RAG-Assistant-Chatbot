@@ -1,7 +1,7 @@
 import axios from "axios";
 import { IConversation } from "../types/conversation";
 
-// Adjust this if your server is at a different URL or port
+// You can adjust the baseURL if your server is different
 const API = axios.create({
   baseURL: "https://ai-assistant-chatbot-server.vercel.app/api",
 });
@@ -19,7 +19,7 @@ export const isAuthenticated = (): boolean => {
   return !!getTokenFromLocalStorage();
 };
 
-// Add an interceptor to attach token if available
+// Attach token if available to all requests
 API.interceptors.request.use((config) => {
   const token = getTokenFromLocalStorage();
   if (token && config.headers) {
@@ -27,6 +27,21 @@ API.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// For guest users, store or retrieve the guestId
+const GUEST_KEY = "guestConversationId";
+
+export const setGuestIdInLocalStorage = (guestId: string) => {
+  localStorage.setItem(GUEST_KEY, guestId);
+};
+
+export const getGuestIdFromLocalStorage = (): string | null => {
+  return localStorage.getItem(GUEST_KEY);
+};
+
+export const clearGuestIdFromLocalStorage = (): void => {
+  localStorage.removeItem(GUEST_KEY);
+};
 
 // --- Auth Endpoints ---
 export const signupUser = async (
@@ -45,7 +60,7 @@ export const loginUser = async (
   return resp.data.token;
 };
 
-// --- Conversation Endpoints ---
+// --- Conversation Endpoints (for authenticated usage) ---
 export const getConversations = async (): Promise<IConversation[]> => {
   const resp = await API.get("/conversations");
   return resp.data;
@@ -103,14 +118,38 @@ export const deleteConversation = async (id: string): Promise<void> => {
   return resp.data;
 };
 
-// --- Chat Endpoint ---
-export const sendChatMessage = async (
+// --- Chat Endpoints ---
+
+/**
+ * Authenticated user chat:
+ * POST /chat/auth
+ * Expects { message, conversationId? }
+ * Returns { answer, conversationId }
+ */
+export const sendAuthedChatMessage = async (
   message: string,
   conversationId: string | null,
 ) => {
-  const resp = await API.post("/chat", {
+  const resp = await API.post("/chat/auth", {
     message,
     conversationId,
   });
-  return resp.data; // { answer: string }
+  return resp.data; // { answer, conversationId }
+};
+
+/**
+ * Guest user chat (unauth):
+ * POST /chat/guest
+ * Expects { message, guestId? }
+ * Returns { answer, guestId }
+ */
+export const sendGuestChatMessage = async (
+  message: string,
+  guestId: string | null,
+) => {
+  const payload: any = { message };
+  if (guestId) payload.guestId = guestId;
+
+  const resp = await API.post("/chat/guest", payload);
+  return resp.data; // { answer, guestId }
 };

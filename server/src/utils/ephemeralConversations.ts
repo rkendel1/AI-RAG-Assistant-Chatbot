@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-// Simple in-memory store:
-// conversationId -> array of messages
+// Simple in-memory store: conversationId -> array of messages
 export const ephemeralStore: Record<string, any[]> = {};
 
 // Utility to create a new ephemeral conversation

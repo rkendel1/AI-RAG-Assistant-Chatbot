@@ -6,21 +6,53 @@ import {
   Typography,
   CircularProgress,
   useTheme,
+  Link as MuiLink,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import {
   getConversationById,
-  sendChatMessage,
+  sendAuthedChatMessage,
+  sendGuestChatMessage,
   createNewConversation,
   isAuthenticated,
+  getGuestIdFromLocalStorage,
+  setGuestIdInLocalStorage,
+  clearGuestIdFromLocalStorage,
 } from "../services/api";
 import { IMessage, IConversation } from "../types/conversation";
 import ReactMarkdown from "react-markdown";
+import { motion, AnimatePresence } from "framer-motion";
 
+/**
+ * Props:
+ *  - conversationId (string | null): If authenticated and you have a known conversation _id, pass it in.
+ *  - onNewConversation (function): Called if you create a brand new conversation for an authenticated user.
+ */
 interface ChatAreaProps {
-  conversationId: string | null;
+  conversationId: string | null; // For authenticated only
   onNewConversation?: (conv: IConversation) => void;
+}
+
+/**
+ * A helper function that detects plain-text URLs (like "movieverse.com" or "https://xyz")
+ * and turns them into Markdown links so that ReactMarkdown will render them as clickable <a> elements.
+ */
+function linkifyText(text: string): string {
+  // Regex that detects:
+  //   1) Optional http(s)://
+  //   2) Some domain (with dots)
+  //   3) Optional path/query/fragment
+  const urlRegex =
+    /((?:https?:\/\/)?(?:[\w-]+\.)+[a-zA-Z]{2,}(?:\/[\w.,@?^=%&:/~+#-]*)?)/g;
+
+  return text.replace(urlRegex, (match) => {
+    // If it doesn't start with "http", prepend "https://"
+    const hasProtocol =
+      match.startsWith("http://") || match.startsWith("https://");
+    const link = hasProtocol ? match : `https://${match}`;
+    return `[${match}](${link})`;
+  });
 }
 
 const ChatArea: React.FC<ChatAreaProps> = ({
@@ -28,17 +60,36 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   onNewConversation,
 }) => {
   const theme = useTheme();
+
+  // Clear guestConversationId on a page reload:
+  useEffect(() => {
+    // Modern approach to detect reload:
+    const [navEntry] = performance.getEntriesByType(
+      "navigation",
+    ) as PerformanceNavigationTiming[];
+    if (navEntry && navEntry.type === "reload") {
+      localStorage.removeItem("guestConversationId");
+    }
+
+    // For older browser support, you can fallback to:
+    if (performance.navigation.type === 1) {
+      localStorage.removeItem("guestConversationId");
+    }
+  }, []);
+
+  // The messages to render
   const [messages, setMessages] = useState<IMessage[]>([]);
+  // The user's current input
   const [input, setInput] = useState("");
-  // loadingState is used for sending a message.
+  // Loading states
   const [loadingState, setLoadingState] = useState<
     "idle" | "processing" | "generating" | "done"
   >("idle");
-  // loadingConversation is used when loading a conversation from the API.
   const [loadingConversation, setLoadingConversation] = useState(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Load conversation messages when conversationId changes.
+  // If we have an authenticated conversationId, load it from the server
   useEffect(() => {
     if (conversationId && isAuthenticated()) {
       loadConversation(conversationId);
@@ -47,13 +98,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   }, [conversationId]);
 
+  // Load the existing conversation from the server
   const loadConversation = async (id: string) => {
     try {
       setLoadingConversation(true);
       const conv = await getConversationById(id);
       setMessages(conv.messages);
     } catch (err) {
-      console.error(err);
+      console.error("Error loading conversation:", err);
     } finally {
       setLoadingConversation(false);
     }
@@ -61,17 +113,21 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
+
     let currentConvId = conversationId;
     try {
-      // If no conversation is selected and the user is authenticated, create one automatically.
-      if (!currentConvId && isAuthenticated()) {
+      setLoadingState("processing");
+
+      // If authenticated but no conversationId, create a new one
+      if (isAuthenticated() && !currentConvId) {
         const newConv = await createNewConversation();
         currentConvId = newConv._id;
         if (onNewConversation) onNewConversation(newConv);
       }
 
-      // Add the user's message.
-      setLoadingState("processing");
+      let guestId = getGuestIdFromLocalStorage();
+
+      // Add the user's message to local state immediately
       const userMessage: IMessage = {
         sender: "user",
         text: input,
@@ -80,37 +136,96 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
 
-      // Simulate a processing delay.
+      // Simulate a short delay for UI effect
       await new Promise((res) => setTimeout(res, 500));
       setLoadingState("generating");
 
-      // Send the message to the API.
-      const resp = await sendChatMessage(input, currentConvId);
+      let answer = "";
+      let returnedId = "";
 
-      // Append the assistant's response.
+      if (isAuthenticated()) {
+        // Authenticated user -> /chat/auth
+        const resp = await sendAuthedChatMessage(
+          userMessage.text,
+          currentConvId,
+        );
+        answer = resp.answer;
+        returnedId = resp.conversationId;
+      } else {
+        // Guest user -> /chat/guest
+        const resp = await sendGuestChatMessage(userMessage.text, guestId);
+        answer = resp.answer;
+        returnedId = resp.guestId;
+
+        // If we had no guestId, store the new one
+        if (!guestId) {
+          setGuestIdInLocalStorage(returnedId);
+        }
+      }
+
+      // Add the AI's response
       const botMessage: IMessage = {
         sender: "assistant",
-        text: resp.answer,
+        text: answer,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, botMessage]);
+
       setLoadingState("done");
     } catch (err) {
-      console.error(err);
+      console.error("Error sending message:", err);
       setLoadingState("done");
     }
   };
 
+  // Auto-scroll to the bottom
   useEffect(() => {
-    // Auto-scroll to bottom when messages update.
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
+  const handleNewGuestConversation = () => {
+    clearGuestIdFromLocalStorage();
+    setMessages([]);
+  };
+
+  // A simple animated ellipsis component for "Generating Response..."
+  const AnimatedEllipsis: React.FC = () => {
+    return (
+      <motion.span
+        style={{ display: "inline-block" }}
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+      >
+        ...
+      </motion.span>
+    );
+  };
+
+  // Link styling for user vs. assistant messages:
+  // Because the user's bubble is bright blue, we ensure the link text is white (or close to it).
+  const userLinkSx = {
+    color: "#fff",
+    textDecoration: "underline",
+    "&:hover": {
+      color: "#ddd",
+      textDecoration: "underline",
+    },
+  };
+
+  const assistantLinkSx = {
+    color: theme.palette.mode === "dark" ? "white" : "black",
+    textDecoration: "underline",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "underline",
+    },
+  };
+
   return (
     <Box display="flex" flexDirection="column" height="100%">
-      {/* Messages Display Area */}
+      {/* Main chat area - displays messages */}
       <Box
         flex="1"
         overflow="auto"
@@ -120,20 +235,19 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         sx={{ transition: "background-color 0.3s ease" }}
       >
         {loadingConversation && (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            mt={2}
-          >
+          <Box display="flex" justifyContent="center" mt={2}>
             <CircularProgress size={24} />
-            <Typography variant="caption" color="textSecondary" ml={1}>
+            <Typography
+              variant="caption"
+              ml={1}
+              sx={{ color: theme.palette.mode === "dark" ? "white" : "black" }}
+            >
               Loading Conversation...
             </Typography>
           </Box>
         )}
 
-        {/* If no messages and not loading, show the placeholder */}
+        {/* If no messages yet, show placeholder */}
         {messages.length === 0 && !loadingConversation ? (
           <Box
             display="flex"
@@ -146,114 +260,126 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               sx={{ fontSize: 80, color: theme.palette.text.secondary, mb: 2 }}
             />
             <Typography variant="h6" align="center" color="textSecondary">
-              Hello 👋 I'm Lumina - David Nguyen's personal assistant. How may I
-              help you today? Send me a message to get started!
+              Hello! I'm Lumina - David Nguyen's personal assistant. Send me a
+              message to get started!
             </Typography>
           </Box>
         ) : (
-          messages.map((msg, idx) => {
-            const isUser = msg.sender === "user";
-            return (
-              <Box
-                key={idx}
-                display="flex"
-                justifyContent={isUser ? "flex-end" : "flex-start"}
-                marginBottom="0.5rem"
-              >
-                <Box
-                  borderRadius="8px"
-                  padding="0.5rem 1rem"
-                  bgcolor={
-                    isUser
-                      ? theme.palette.primary.main
-                      : theme.palette.mode === "dark"
-                        ? theme.palette.grey[800]
-                        : "#e0e0e0"
-                  }
-                  color={
-                    isUser
-                      ? theme.palette.primary.contrastText
-                      : theme.palette.text.primary
-                  }
-                  maxWidth="60%"
-                  whiteSpace="pre-wrap"
-                  boxShadow={1}
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: isUser
-                        ? theme.palette.primary.dark
-                        : theme.palette.mode === "dark"
-                          ? theme.palette.grey[700]
-                          : "#d5d5d5",
-                    },
+          <AnimatePresence initial={false}>
+            {messages.map((msg, idx) => {
+              const isUser = msg.sender === "user";
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  style={{
+                    display: "flex",
+                    justifyContent: isUser ? "flex-end" : "flex-start",
+                    marginBottom: "0.5rem",
                   }}
                 >
-                  {isUser ? (
-                    <Typography variant="body1">{msg.text}</Typography>
-                  ) : (
+                  <Box
+                    borderRadius="8px"
+                    p="0.5rem 1rem"
+                    bgcolor={
+                      isUser
+                        ? "#1976d2"
+                        : theme.palette.mode === "dark"
+                          ? theme.palette.grey[800]
+                          : "#e0e0e0"
+                    }
+                    color={isUser ? "white" : theme.palette.text.primary}
+                    maxWidth="60%"
+                    whiteSpace="pre-wrap"
+                    boxShadow={1}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: isUser
+                          ? theme.palette.primary.dark
+                          : theme.palette.mode === "dark"
+                            ? theme.palette.grey[700]
+                            : "#d5d5d5",
+                      },
+                    }}
+                  >
+                    {/*
+                      Use ReactMarkdown for all messages,
+                      but apply different link styles for user vs. assistant
+                    */}
                     <ReactMarkdown
                       components={{
-                        li: ({ node, ...props }) => (
-                          <li
-                            style={{ marginBottom: "0.25rem", lineHeight: 1.5 }}
+                        a: ({ ...props }) => (
+                          <MuiLink
                             {...props}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={isUser ? userLinkSx : assistantLinkSx}
                           />
                         ),
                       }}
                     >
-                      {msg.text}
+                      {linkifyText(msg.text)}
                     </ReactMarkdown>
-                  )}
-                </Box>
-              </Box>
-            );
-          })
+                  </Box>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         )}
+
+        {/* Show "processing" or "generating" indicator */}
         {loadingState === "processing" && (
           <Typography variant="caption" color="textSecondary">
             Processing Message...
           </Typography>
         )}
         {loadingState === "generating" && (
-          <Box display="flex" alignItems="center" gap="0.5rem">
+          <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
-              Generating Response...
+              Generating Response
+              <AnimatedEllipsis />
             </Typography>
           </Box>
         )}
       </Box>
 
-      {/* Message Input */}
+      {/* Input area */}
       <Box
         display="flex"
-        padding="1rem"
+        flexDirection="column"
+        p="1rem"
         borderTop={`1px solid ${theme.palette.divider}`}
       >
-        <TextField
-          fullWidth
-          placeholder="Type your message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleSendMessage();
-            }
-          }}
-          sx={{
-            backgroundColor: theme.palette.background.paper,
-            borderRadius: 1,
-            transition: "background-color 0.3s ease",
-          }}
-        />
-        <IconButton
-          color="primary"
-          onClick={handleSendMessage}
-          disabled={loadingState !== "idle" && loadingState !== "done"}
-        >
-          <SendIcon />
-        </IconButton>
+        <Box display="flex">
+          <TextField
+            fullWidth
+            placeholder="Type your message..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+            sx={{
+              backgroundColor: theme.palette.background.paper,
+              borderRadius: 1,
+              transition: "background-color 0.3s ease",
+            }}
+          />
+          <IconButton
+            color="primary"
+            onClick={handleSendMessage}
+            disabled={loadingState !== "idle" && loadingState !== "done"}
+          >
+            <SendIcon />
+          </IconButton>
+        </Box>
       </Box>
     </Box>
   );

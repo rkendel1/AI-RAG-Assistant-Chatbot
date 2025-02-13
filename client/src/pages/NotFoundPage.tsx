@@ -44,17 +44,30 @@ const NotFoundPage: React.FC = () => {
               mb: 2,
             }}
           />
-          <Typography variant="h2" sx={{ fontWeight: "bold", mb: 2 }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: "bold",
+              mb: 2,
+              color: theme.palette.mode === "dark" ? "white" : "black",
+            }}
+          >
             404
           </Typography>
-          <Typography variant="h5" sx={{ mb: 3 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              mb: 3,
+              color: theme.palette.mode === "dark" ? "white" : "black",
+            }}
+          >
             Oops! The page you're looking for doesn't exist.
           </Typography>
           <Button
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/chat")}
             sx={{
               px: 4,
               py: 1.5,

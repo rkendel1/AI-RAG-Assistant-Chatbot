@@ -9,7 +9,7 @@ import mongoose, { Schema, Document } from "mongoose";
  *       properties:
  *         sender:
  *           type: string
- *           enum: [user, assistant]
+ *           enum: [user, model]
  *           description: The sender of the message.
  *         text:
  *           type: string
@@ -63,7 +63,7 @@ import mongoose, { Schema, Document } from "mongoose";
  */
 
 export interface IMessage {
-  sender: "user" | "assistant";
+  sender: "user" | "model";
   text: string;
   timestamp: Date;
 }
@@ -77,7 +77,7 @@ export interface IConversation extends Document {
 }
 
 const MessageSchema: Schema = new Schema({
-  sender: { type: String, enum: ["user", "assistant"], required: true },
+  sender: { type: String, enum: ["user", "model"], required: true },
   text: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
 });

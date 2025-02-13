@@ -88,7 +88,12 @@ const LandingPage: React.FC = () => {
                 variant={isMobile ? "h3" : "h2"}
                 component="h1"
                 gutterBottom
-                sx={{ fontWeight: "bold" }}
+                sx={{
+                  fontWeight: "bold",
+                  textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                  color: theme.palette.mode === "dark" ? "white" : "black",
+                  transition: "color 0.3s",
+                }}
               >
                 Welcome to David Nguyen's AI Assistant - Lumina!
               </Typography>
@@ -109,7 +114,11 @@ const LandingPage: React.FC = () => {
               variant="h4"
               align="center"
               gutterBottom
-              sx={{ fontWeight: "bold", mb: 1 }}
+              sx={{
+                fontWeight: "bold",
+                mb: 1,
+                color: theme.palette.mode === "dark" ? "white" : "black",
+              }}
             >
               What Lumina Can Do
             </Typography>
@@ -201,7 +210,14 @@ const LandingPage: React.FC = () => {
         {/* Call-to-Action Section */}
         <Fade in={showCTA} timeout={800}>
           <Box sx={{ mt: 8, textAlign: "center" }}>
-            <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                color: theme.palette.mode === "dark" ? "white" : "black",
+              }}
+            >
               Get Started Now
             </Typography>
             <Typography
@@ -267,7 +283,7 @@ const LandingPage: React.FC = () => {
           mt: "auto",
         }}
       >
-        <Typography variant="caption" color="textSecondary">
+        <Typography variant="body1" color="textSecondary">
           © {new Date().getFullYear()} David Nguyen's AI Assistant. All rights
           reserved.
         </Typography>

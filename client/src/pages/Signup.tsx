@@ -49,6 +49,7 @@ const Signup: React.FC = () => {
       height="100vh"
       justifyContent="center"
       alignItems="center"
+      sx={{ background: "linear-gradient(to right, #00c6ff, #0072ff)" }}
     >
       <Paper style={{ padding: "2rem", maxWidth: 400, width: "100%" }}>
         <Typography variant="h5" marginBottom="1rem">
