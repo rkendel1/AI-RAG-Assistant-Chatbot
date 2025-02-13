@@ -9,7 +9,8 @@
     "dev": "cd server && npm run dev",
     "frontend": "cd client && npm start",
     "backend": "cd server && npm run dev",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md,html}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md,html}\"",
+    "store": "cd server && ts-node src/scripts/storeKnowledge.ts"
   },
   "dependencies": {
     "prettier": "^3.4.2"

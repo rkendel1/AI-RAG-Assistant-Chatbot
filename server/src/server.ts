@@ -26,7 +26,7 @@ const corsOptions = {
   origin: "*", // Allow all origins
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: false // Must be false if using '*'
+  credentials: false,
 };
 
 app.use(cors(corsOptions));
@@ -87,7 +87,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./src/routes/*.ts", "./src/routes/*.js", './src/models/*.js'],
+  apis: ["./src/routes/*.ts", "./src/routes/*.js", "./src/models/*.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

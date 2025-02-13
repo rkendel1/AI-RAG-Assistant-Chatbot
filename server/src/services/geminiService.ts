@@ -5,42 +5,55 @@ import {
   GenerationConfig,
 } from "@google/generative-ai";
 import dotenv from "dotenv";
+import { searchKnowledge } from "../scripts/queryKnowledge";
+
 dotenv.config();
 
 /**
- * Sends a chat message to the Gemini AI using the provided conversation history and returns the AI response.
- * @param history - The conversation history (an array of messages in the expected format).
+ * Sends a chat message to Gemini AI, first searching Pinecone for relevant knowledge.
+ * If no relevant knowledge is found, Gemini still responds with general information.
+ * @param history - The conversation history.
  * @param message - The new user message.
  * @param systemInstruction - (Optional) A system instruction to guide the AI.
- * @returns A promise that resolves with the AI's response text.
+ * @returns A promise resolving with the AI's response text.
  */
 export const chatWithAI = async (
   history: Array<any>,
   message: string,
   systemInstruction?: string,
 ): Promise<string> => {
-  // Check env vars
   if (!process.env.GOOGLE_AI_API_KEY) {
     throw new Error("Missing GOOGLE_AI_API_KEY in environment variables");
   }
-  if (!process.env.AI_INSTRUCTIONS) {
-    throw new Error("Missing AI_INSTRUCTIONS in environment variables");
+
+  // Search Pinecone for relevant context before querying Gemini AI
+  const pineconeResults = await searchKnowledge(message, 3);
+  let additionalContext = "";
+
+  if (pineconeResults.length > 0) {
+    additionalContext = `\n\nRelevant Information:\n${pineconeResults
+      .map((r) => `- ${r.text}`)
+      .join("\n")}`;
+  } else {
+    additionalContext =
+      "No relevant knowledge found in Pinecone. You are a highly intelligent AI assistant. If relevant information is found in the user's internal database, include it in your response. However, if no relevant information is found, use your general knowledge to answer the question accurately and in detail.\n";
   }
 
-  // Combine optional system instruction with your env instructions
+  console.log("🧠 Enriching AI with Pinecone knowledge:", additionalContext);
+
+  // Combine system instructions with knowledge base context
   const fullSystemInstruction = systemInstruction
     ? systemInstruction + " "
     : "";
 
-  // Initialize the model
+  // Initialize Gemini AI
   const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
-    // @ts-ignore: The official types might not show systemInstruction, but it works
+    // @ts-ignore
     systemInstruction: fullSystemInstruction,
   });
 
-  // This generation config mirrors your working client code:
   const generationConfig: GenerationConfig = {
     temperature: 1,
     topP: 0.95,
@@ -48,7 +61,6 @@ export const chatWithAI = async (
     maxOutputTokens: 8192,
   };
 
-  // Set up safety settings similarly
   const safetySettings = [
     {
       category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -68,17 +80,19 @@ export const chatWithAI = async (
     },
   ];
 
-  // Create the chat session with conversation history
+  // Add Pinecone results to history
+  history.push({ role: "user", parts: [{ text: message }] });
+  history.push({ role: "assistant", parts: [{ text: additionalContext }] });
+
+  // Start chat session
   const chatSession = model.startChat({
     generationConfig,
     safetySettings,
     history,
   });
 
-  // Send the new user message
   const result = await chatSession.sendMessage(message);
 
-  // Validate result
   if (!result.response || !result.response.text) {
     throw new Error("Failed to get text response from the AI.");
   }

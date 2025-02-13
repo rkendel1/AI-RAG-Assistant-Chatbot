@@ -54,6 +54,7 @@ Alternatively, the backup app is deployed live on Netlify at: [https://lumina-ai
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Pinecone](https://img.shields.io/badge/Pinecone-FF6F61?style=for-the-badge&logo=googledataflow&logoColor=white)
 ![Material UI](https://img.shields.io/badge/Material--UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=json-web-tokens)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
@@ -105,6 +106,7 @@ The project is divided into two main parts:
   - Generation: Use a generative model to create a response based on the augmented input.
   - Feedback Loop: Implement a feedback loop to continuously improve the system based on user interactions and feedback.
   - LangChain: Use LangChain to manage the entire process, from retrieval to generation, ensuring a seamless integration of RAG into the chatbot's workflow.
+  - Pinecone: Use Pinecone for vector similarity search to efficiently retrieve relevant documents or data for the RAG model.
 
 ## Technologies Used
 
@@ -201,7 +203,8 @@ The project is divided into two main parts:
    JWT_SECRET=your_jwt_secret_here
    GOOGLE_AI_API_KEY=your_google_ai_api_key_here
    AI_INSTRUCTIONS=Your system instructions for the AI assistant
-   # ... additional Firebase variables if needed
+   PINECONE_API_KEY=your_pinecone_api_key_here
+   PINECONE_INDEX_NAME=your_pinecone_index_name_here
    ```
 
 4. **Run the server in development mode:**
@@ -233,6 +236,28 @@ The project is divided into two main parts:
    ```
 
    The app will run on [http://localhost:3000](http://localhost:3000).
+
+### AI/ML Setup
+
+1. Install necessary Node.js packages:
+
+   ```bash
+   npm install
+   ```
+
+2. Store knowledge data in Pinecone vector database:
+
+   ```bash
+   npm run store
+   ```
+
+   Or
+
+   ```bash
+   ts-node server/src/scripts/storeKnowledge.ts
+   ```
+
+3. Ensure you run this command before starting the backend server to store the knowledge data in the Pinecone vector database.
 
 ## Deployment
 

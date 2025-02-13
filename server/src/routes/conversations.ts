@@ -328,7 +328,7 @@ router.put("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
     const conversation = await Conversation.findOneAndUpdate(
       { _id: req.params.id, user: userId },
       { title },
-      { new: true }
+      { new: true },
     );
     if (!conversation) {
       return res.status(404).json({ message: "Conversation not found" });
@@ -411,23 +411,27 @@ router.put("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.get("/search/:query", authenticateJWT, async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = req.user.id;
-    const query = req.params.query;
-    // Search by conversation title or within messages' text
-    const conversations = await Conversation.find({
-      user: userId,
-      $or: [
-        { title: { $regex: query, $options: "i" } },
-        { "messages.text": { $regex: query, $options: "i" } },
-      ],
-    });
-    res.json(conversations);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.get(
+  "/search/:query",
+  authenticateJWT,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user.id;
+      const query = req.params.query;
+      // Search by conversation title or within messages' text
+      const conversations = await Conversation.find({
+        user: userId,
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { "messages.text": { $regex: query, $options: "i" } },
+        ],
+      });
+      res.json(conversations);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+);
 
 /**
  * @swagger
@@ -461,20 +465,24 @@ router.get("/search/:query", authenticateJWT, async (req: AuthRequest, res: Resp
  *       500:
  *         description: Internal server error.
  */
-router.delete("/:id", authenticateJWT, async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = req.user.id;
-    const conversation = await Conversation.findOneAndDelete({
-      _id: req.params.id,
-      user: userId,
-    });
-    if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
+router.delete(
+  "/:id",
+  authenticateJWT,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user.id;
+      const conversation = await Conversation.findOneAndDelete({
+        _id: req.params.id,
+        user: userId,
+      });
+      if (!conversation) {
+        return res.status(404).json({ message: "Conversation not found" });
+      }
+      res.json({ message: "Conversation deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
-    res.json({ message: "Conversation deleted successfully" });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  },
+);
 
 export default router;
