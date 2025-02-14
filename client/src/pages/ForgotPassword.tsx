@@ -71,8 +71,20 @@ const ForgotPassword: React.FC = () => {
       sx={{ background: "linear-gradient(to right, #00c6ff, #0072ff)" }}
     >
       <Paper style={{ padding: "2rem", maxWidth: 400, width: "100%" }}>
-        <Typography variant="h5" marginBottom="1rem">
+        <Typography
+          variant="h5"
+          marginBottom="1rem"
+          sx={{ textAlign: "center" }}
+        >
           Forgot Password
+        </Typography>
+        <Typography
+          variant="body2"
+          marginBottom="1rem"
+          sx={{ textAlign: "center" }}
+        >
+          Forgot your password? We've got you covered. Enter your email to reset
+          your password.
         </Typography>
         {!emailVerified ? (
           <>

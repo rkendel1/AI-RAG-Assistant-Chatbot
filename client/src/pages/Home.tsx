@@ -20,6 +20,7 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // On mobile, default the sidebar to closed; on desktop open it.
@@ -35,6 +36,8 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
   };
 
   const loadConversations = async () => {
+    setLoading(true);
+
     try {
       if (isAuthenticated()) {
         const resp = await getConversations();
@@ -44,6 +47,8 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,7 +92,7 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
           selectedConversationId={selectedConversationId}
           onRefresh={loadConversations}
           isMobile={isMobile}
-          loadingConversations={conversations.length === 0 && isAuthenticated()}
+          loadingConversations={loading}
         />
         <Box flex="1">
           <ChatArea

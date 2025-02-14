@@ -95,77 +95,98 @@ const Sidebar: React.FC<SidebarProps> = ({
         boxShadow: isMobile && open ? 5 : 0,
       }}
     >
-      {loadingConversations ? (
+      {loadingConversations && (
         <Box textAlign="center" padding="1rem">
           <CircularProgress />
         </Box>
-      ) : null}
+      )}
+
+      {/* If the user is authenticated */}
       {isAuthenticated() ? (
-        <List>
-          {conversations.map((conv) => (
-            <ListItemButton
-              key={conv._id}
-              selected={conv._id === selectedConversationId}
-              onClick={() => onSelectConversation(conv._id)}
-              sx={{ justifyContent: "space-between" }}
-            >
-              <ListItemText
-                primary={conv.title}
-                primaryTypographyProps={{
-                  noWrap: true, // This will clip the text and add ellipsis if it's too long
-                  sx: {
-                    color:
-                      theme.palette.mode === "dark"
-                        ? theme.palette.common.white
-                        : theme.palette.text.primary,
-                  },
-                }}
-                sx={{ minWidth: 0 }} // Ensures proper shrinking in flex layout
-              />
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <IconButton
-                  edge="end"
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRename(conv._id, conv.title);
+        conversations.length === 0 ? (
+          // Show a centered message if there are no conversations
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              p: 2,
+            }}
+          >
+            <Typography variant="body1" color="textSecondary" align="center">
+              No conversations yet. Start by sending a message to Lumina!
+            </Typography>
+          </Box>
+        ) : (
+          // Otherwise, render the conversation list
+          <List>
+            {conversations.map((conv) => (
+              <ListItemButton
+                key={conv._id}
+                selected={conv._id === selectedConversationId}
+                onClick={() => onSelectConversation(conv._id)}
+                sx={{ justifyContent: "space-between" }}
+              >
+                <ListItemText
+                  primary={conv.title}
+                  primaryTypographyProps={{
+                    noWrap: true, // clip text and add ellipsis if too long
+                    sx: {
+                      color:
+                        theme.palette.mode === "dark"
+                          ? theme.palette.common.white
+                          : theme.palette.text.primary,
+                    },
                   }}
-                  disabled={loadingRenameId === conv._id}
-                >
-                  {loadingRenameId === conv._id ? (
-                    <CircularProgress size={16} color="inherit" />
-                  ) : (
-                    <EditIcon fontSize="small" />
-                  )}
-                </IconButton>
-                <IconButton
-                  edge="end"
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(conv._id);
-                  }}
-                  disabled={loadingDeleteId === conv._id}
-                  sx={{ color: theme.palette.error.main }}
-                >
-                  {loadingDeleteId === conv._id ? (
-                    <CircularProgress size={16} color="inherit" />
-                  ) : (
-                    <DeleteIcon fontSize="small" />
-                  )}
-                </IconButton>
-              </Box>
-            </ListItemButton>
-          ))}
-        </List>
+                  sx={{ minWidth: 0 }} // ensures proper shrinking in flex layout
+                />
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <IconButton
+                    edge="end"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRename(conv._id, conv.title);
+                    }}
+                    disabled={loadingRenameId === conv._id}
+                  >
+                    {loadingRenameId === conv._id ? (
+                      <CircularProgress size={16} color="inherit" />
+                    ) : (
+                      <EditIcon fontSize="small" />
+                    )}
+                  </IconButton>
+                  <IconButton
+                    edge="end"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(conv._id);
+                    }}
+                    disabled={loadingDeleteId === conv._id}
+                    sx={{ color: theme.palette.error.main }}
+                  >
+                    {loadingDeleteId === conv._id ? (
+                      <CircularProgress size={16} color="inherit" />
+                    ) : (
+                      <DeleteIcon fontSize="small" />
+                    )}
+                  </IconButton>
+                </Box>
+              </ListItemButton>
+            ))}
+          </List>
+        )
       ) : (
+        // If not authenticated, show a prompt to log in
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             height: "100%",
-            p: 2, // optional padding
+            p: 2,
           }}
         >
           <Typography variant="body1" color="textSecondary" align="center">

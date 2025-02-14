@@ -44,8 +44,19 @@ const Login: React.FC = () => {
       sx={{ background: "linear-gradient(to right, #00c6ff, #0072ff)" }}
     >
       <Paper style={{ padding: "2rem", maxWidth: 400, width: "100%" }}>
-        <Typography variant="h5" marginBottom="1rem">
+        <Typography
+          variant="h4"
+          marginBottom="1rem"
+          sx={{ textAlign: "center" }}
+        >
           Login
+        </Typography>
+        <Typography
+          variant="body2"
+          marginBottom="1rem"
+          sx={{ textAlign: "center" }}
+        >
+          Login to save your chat history and continue as a registered user.
         </Typography>
         <TextField
           fullWidth
