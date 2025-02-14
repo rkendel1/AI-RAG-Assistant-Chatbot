@@ -260,8 +260,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               sx={{ fontSize: 80, color: theme.palette.text.secondary, mb: 2 }}
             />
             <Typography variant="h6" align="center" color="textSecondary">
-              Hello! I'm Lumina - David Nguyen's personal assistant. Send me a
-              message to get started!
+              Hello! 👋 I'm Lumina - David Nguyen's personal assistant. Send me
+              a message to get started! 🚀
             </Typography>
           </Box>
         ) : (
@@ -376,6 +376,16 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             color="primary"
             onClick={handleSendMessage}
             disabled={loadingState !== "idle" && loadingState !== "done"}
+            sx={{
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              borderRadius: 1,
+              marginLeft: "0.5rem",
+              transition: "background-color 0.3s ease",
+              "&:hover": {
+                backgroundColor: theme.palette.primary.dark,
+              },
+            }}
           >
             <SendIcon />
           </IconButton>

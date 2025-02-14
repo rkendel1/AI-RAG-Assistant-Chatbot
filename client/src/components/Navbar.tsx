@@ -6,15 +6,20 @@ import {
   Typography,
   InputBase,
   Box,
-  Button,
   useMediaQuery,
   useTheme,
   CircularProgress,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddCommentIcon from "@mui/icons-material/AddComment";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
+
 import {
   createNewConversation,
   searchConversations,
@@ -22,8 +27,6 @@ import {
 } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { IConversation } from "../types/conversation";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 
 interface NavbarProps {
   sidebarOpen: boolean;
@@ -47,18 +50,27 @@ const Navbar: React.FC<NavbarProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [newConvLoading, setNewConvLoading] = useState(false);
+
+  // For the "human" icon menu (Login/Register)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const text = "Lumina AI";
   const colors = ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#9D4EDD"];
-
-  // A ref to store the debounce timer.
   const debounceTimerRef = useRef<number | null>(null);
 
-  /**
-   * Debounced search function to reduce API calls.
-   */
+  // Opens the menu anchor
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Closes the menu anchor
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const debouncedSearch = (value: string) => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
@@ -87,11 +99,6 @@ const Navbar: React.FC<NavbarProps> = ({
     debouncedSearch(value);
   };
 
-  /**
-   * Creates a new conversation via the backend if possible.
-   * If 401 is returned (user not authenticated), we still clear the local conversation,
-   * allowing them to start fresh in the UI.
-   */
   const handleCreateNewConversation = async () => {
     setNewConvLoading(true);
 
@@ -104,10 +111,8 @@ const Navbar: React.FC<NavbarProps> = ({
       onRefreshConversations();
       onSelectConversation(newConv._id);
     } catch (error: any) {
-      // If backend responds with 401 or any error, we still clear the local UI convo
       onSelectConversation(null);
       onRefreshConversations();
-      // For debugging
       if (error.response && error.response.status === 401) {
         console.warn(
           "User is not authenticated, clearing conversation in UI only.",
@@ -115,7 +120,6 @@ const Navbar: React.FC<NavbarProps> = ({
       } else {
         console.error(error);
       }
-
       window.location.reload();
     } finally {
       setNewConvLoading(false);
@@ -127,7 +131,6 @@ const Navbar: React.FC<NavbarProps> = ({
     navigate("/login");
   };
 
-  // Toggle Dark/Light Mode
   const handleToggleTheme = () => {
     onToggleTheme();
     localStorage.setItem("darkMode", JSON.stringify(!darkMode));
@@ -209,28 +212,42 @@ const Navbar: React.FC<NavbarProps> = ({
             )}
           </IconButton>
 
-          {/* Login/Signup or Logout */}
-          {!isAuthenticated() && (
+          {/* Login/Signup (if not authenticated) OR Logout */}
+          {!isAuthenticated() ? (
             <>
-              <Button
-                onClick={() => navigate("/login")}
+              {/* Single 'human' icon */}
+              <IconButton
+                sx={{ ml: 1 }}
                 color="inherit"
-                sx={{ ml: 1, font: "inherit", textTransform: "none" }}
-                title="Login"
+                onClick={handleMenuOpen}
+                title="Login or Register"
               >
-                LOGIN
-              </Button>
-              <Button
-                onClick={() => navigate("/signup")}
-                color="inherit"
-                sx={{ ml: 1, font: "inherit", textTransform: "none" }}
-                title="Sign Up"
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
               >
-                REGISTER
-              </Button>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate("/login");
+                  }}
+                >
+                  Login
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate("/signup");
+                  }}
+                >
+                  Register
+                </MenuItem>
+              </Menu>
             </>
-          )}
-          {isAuthenticated() && (
+          ) : (
             <IconButton
               onClick={handleLogout}
               sx={{ ml: 1, color: "error.main" }}
@@ -240,7 +257,7 @@ const Navbar: React.FC<NavbarProps> = ({
           )}
         </Box>
 
-        {/* Title on the Right */}
+        {/* Title on the Right (only if not mobile) */}
         {!isMobile && (
           <Typography
             variant="h6"
@@ -261,12 +278,12 @@ const Navbar: React.FC<NavbarProps> = ({
                   key={index}
                   component="span"
                   sx={{
-                    color, // original color
+                    color,
                     display: "inline-block",
                     transition: "transform 0.3s ease, color 0.3s ease",
                     "&:hover": {
                       transform: "scale(1.2)",
-                      color: "#e19292", // hover color (white for strong contrast)
+                      color: "#e19292",
                     },
                   }}
                 >

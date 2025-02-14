@@ -159,8 +159,16 @@ const Sidebar: React.FC<SidebarProps> = ({
           ))}
         </List>
       ) : (
-        <Box textAlign="center" padding="1rem">
-          <Typography variant="body1" color="textSecondary">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            p: 2, // optional padding
+          }}
+        >
+          <Typography variant="body1" color="textSecondary" align="center">
             Log in to save conversation history
           </Typography>
         </Box>
