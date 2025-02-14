@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -261,10 +262,20 @@ const Navbar: React.FC<NavbarProps> = ({
         {!isMobile && (
           <Typography
             variant="h6"
-            sx={{ ml: 2, fontSize: "24px", fontWeight: "bold" }}
+            component={Link}
+            to="/"
+            sx={{
+              ml: 2,
+              fontSize: "24px",
+              fontWeight: "bold",
+              textDecoration: "none",
+              color: "inherit",
+              "&:hover": {
+                textDecoration: "none",
+              },
+            }}
           >
             {text.split("").map((char, index) => {
-              // Preserve spaces without applying styles
               if (char === " ") {
                 return (
                   <Box key={index} component="span">

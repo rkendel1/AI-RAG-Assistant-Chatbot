@@ -57,7 +57,7 @@ const LandingPage: React.FC = () => {
   // Reusable style for each feature card.
   const cardStyle = {
     height: "100%",
-    transition: "transform 0.3s, box-shadow 0.3s",
+    transition: "transform 0.3s, box-shadow 0.6s",
     "&:hover": {
       transform: "scale(1.03)",
       boxShadow: theme.shadows[6],
