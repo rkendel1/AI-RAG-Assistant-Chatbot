@@ -192,15 +192,16 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
   // A simple animated ellipsis component for "Generating Response..."
   const AnimatedEllipsis: React.FC = () => {
-    return (
-      <motion.span
-        style={{ display: "inline-block" }}
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-      >
-        ...
-      </motion.span>
-    );
+    const [dotCount, setDotCount] = useState(0);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setDotCount((prev) => (prev + 1) % 4);
+      }, 500);
+      return () => clearInterval(interval);
+    }, []);
+
+    return <span>{'.'.repeat(dotCount)}</span>;
   };
 
   // Link styling for user vs. assistant messages:
@@ -332,9 +333,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
         {/* Show "processing" or "generating" indicator */}
         {loadingState === "processing" && (
-          <Typography variant="caption" color="textSecondary">
-            Processing Message...
-          </Typography>
+          <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
+            <CircularProgress size={18} />
+            <Typography variant="caption" color="textSecondary">
+              Processing Messsage
+              <AnimatedEllipsis />
+            </Typography>
+          </Box>
         )}
         {loadingState === "generating" && (
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
