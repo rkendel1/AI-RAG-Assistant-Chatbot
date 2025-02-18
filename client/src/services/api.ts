@@ -42,19 +42,36 @@ API.interceptors.request.use((config) => {
 // For guest users, store or retrieve the guestId
 const GUEST_KEY = "guestConversationId";
 
+/**
+ * Store the guestId in local storage
+ * @param guestId - The guestId to store
+ */
 export const setGuestIdInLocalStorage = (guestId: string) => {
   localStorage.setItem(GUEST_KEY, guestId);
 };
 
+/**
+ * Retrieve the guestId from local storage
+ */
 export const getGuestIdFromLocalStorage = (): string | null => {
   return localStorage.getItem(GUEST_KEY);
 };
 
+/**
+ * Clear the guestId from local storage
+ */
 export const clearGuestIdFromLocalStorage = (): void => {
   localStorage.removeItem(GUEST_KEY);
 };
 
 // --- Auth Endpoints ---
+
+/**
+ * Sign up a new user
+ *
+ * @param email The user's email
+ * @param password The user's password
+ */
 export const signupUser = async (
   email: string,
   password: string,
@@ -63,6 +80,12 @@ export const signupUser = async (
   return resp.data;
 };
 
+/**
+ * Log in a user
+ *
+ * @param email The user's email
+ * @param password The user's password
+ */
 export const loginUser = async (
   email: string,
   password: string,
@@ -72,11 +95,20 @@ export const loginUser = async (
 };
 
 // --- Conversation Endpoints (for authenticated usage) ---
+
+/**
+ * Get all conversations
+ */
 export const getConversations = async (): Promise<IConversation[]> => {
   const resp = await API.get("/conversations");
   return resp.data;
 };
 
+/**
+ * Get a conversation by ID
+ *
+ * @param id The conversation ID
+ */
 export const getConversationById = async (
   id: string,
 ): Promise<IConversation> => {
@@ -84,11 +116,20 @@ export const getConversationById = async (
   return resp.data;
 };
 
+/**
+ * Create a new conversation
+ */
 export const createNewConversation = async (): Promise<IConversation> => {
   const resp = await API.post("/conversations");
   return resp.data;
 };
 
+/**
+ * Rename a conversation
+ *
+ * @param id The conversation ID
+ * @param title The new title
+ */
 export const renameConversation = async (
   id: string,
   title: string,
@@ -97,6 +138,11 @@ export const renameConversation = async (
   return resp.data;
 };
 
+/**
+ * Search conversations
+ *
+ * @param query The search query
+ */
 export const searchConversations = async (
   query: string,
 ): Promise<IConversation[]> => {
@@ -104,6 +150,11 @@ export const searchConversations = async (
   return resp.data;
 };
 
+/**
+ * Verify if an email exists
+ *
+ * @param email The email to verify
+ */
 export const verifyEmail = async (
   email: string,
 ): Promise<{ exists: boolean }> => {
@@ -113,6 +164,12 @@ export const verifyEmail = async (
   return response.data;
 };
 
+/**
+ * Reset a user's password
+ *
+ * @param email The user's email
+ * @param newPassword The new password
+ */
 export const resetPassword = async (
   email: string,
   newPassword: string,
@@ -124,6 +181,11 @@ export const resetPassword = async (
   return response.data;
 };
 
+/**
+ * Delete a conversation
+ *
+ * @param id The conversation ID
+ */
 export const deleteConversation = async (id: string): Promise<void> => {
   const resp = await API.delete(`/conversations/${id}`);
   return resp.data;
@@ -136,6 +198,9 @@ export const deleteConversation = async (id: string): Promise<void> => {
  * POST /chat/auth
  * Expects { message, conversationId? }
  * Returns { answer, conversationId }
+ *
+ * @param message The chat message
+ * @param conversationId The conversation ID
  */
 export const sendAuthedChatMessage = async (
   message: string,
@@ -153,6 +218,9 @@ export const sendAuthedChatMessage = async (
  * POST /chat/guest
  * Expects { message, guestId? }
  * Returns { answer, guestId }
+ *
+ * @param message The chat message
+ * @param guestId The guest ID
  */
 export const sendGuestChatMessage = async (
   message: string,
