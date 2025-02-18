@@ -4,6 +4,34 @@
   "description": "A chatbot for David Nguyen's personal AI assistant.",
   "main": "dist/index.js",
   "author": "Son Nguyen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hoangsonww/AI-Assistant-Chatbot.git"
+  },
+  "keywords": [
+    "chatbot",
+    "ai",
+    "assistant",
+    "personal",
+    "openai",
+    "lumina",
+    "knowledge",
+    "rag",
+    "retrieval",
+    "augmented",
+    "generation",
+    "pinecone",
+    "langchain",
+    "typescript",
+    "nodejs",
+    "express",
+    "mongodb",
+    "react"
+  ],
+  "bugs": {
+    "url": "https://github.com/hoangsonww/AI-Assistant-Chatbot/issues"
+  },
   "scripts": {
     "build": "tsc",
     "start": "cd client && npm start",
