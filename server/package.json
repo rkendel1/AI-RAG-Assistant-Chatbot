@@ -2,6 +2,35 @@
   "name": "ai-assistant-backend",
   "version": "1.0.0",
   "main": "dist/server.js",
+  "author": "Son Nguyen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hoangsonww/AI-Assistant-Chatbot.git"
+  },
+  "keywords": [
+    "chatbot",
+    "ai",
+    "assistant",
+    "personal",
+    "openai",
+    "lumina",
+    "knowledge",
+    "rag",
+    "retrieval",
+    "augmented",
+    "generation",
+    "pinecone",
+    "langchain",
+    "typescript",
+    "nodejs",
+    "express",
+    "mongodb",
+    "react"
+  ],
+  "bugs": {
+    "url": "https://github.com/hoangsonww/AI-Assistant-Chatbot/issues"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",

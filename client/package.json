@@ -1,7 +1,36 @@
 {
   "name": "client",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
+  "author": "Son Nguyen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hoangsonww/AI-Assistant-Chatbot.git"
+  },
+  "keywords": [
+    "chatbot",
+    "ai",
+    "assistant",
+    "personal",
+    "openai",
+    "lumina",
+    "knowledge",
+    "rag",
+    "retrieval",
+    "augmented",
+    "generation",
+    "pinecone",
+    "langchain",
+    "typescript",
+    "nodejs",
+    "express",
+    "mongodb",
+    "react"
+  ],
+  "bugs": {
+    "url": "https://github.com/hoangsonww/AI-Assistant-Chatbot/issues"
+  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
