@@ -201,7 +201,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       return () => clearInterval(interval);
     }, []);
 
-    return <span>{'.'.repeat(dotCount)}</span>;
+    return <span>{".".repeat(dotCount)}</span>;
   };
 
   // Link styling for user vs. assistant messages:
