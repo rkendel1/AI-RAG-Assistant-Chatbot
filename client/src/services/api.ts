@@ -7,14 +7,25 @@ const API = axios.create({
 });
 
 // --- Token Handling ---
+
+/**
+ * Store the token in local storage
+ * @param token - The token to store
+ */
 export const setTokenInLocalStorage = (token: string) => {
   localStorage.setItem("token", token);
 };
 
+/**
+ * Retrieve the token from local storage
+ */
 export const getTokenFromLocalStorage = (): string | null => {
   return localStorage.getItem("token");
 };
 
+/**
+ * Clear the token from local storage
+ */
 export const isAuthenticated = (): boolean => {
   return !!getTokenFromLocalStorage();
 };
