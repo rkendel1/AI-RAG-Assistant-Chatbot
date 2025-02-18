@@ -10,6 +10,7 @@ const API = axios.create({
 
 /**
  * Store the token in local storage
+ *
  * @param token - The token to store
  */
 export const setTokenInLocalStorage = (token: string) => {
@@ -44,6 +45,7 @@ const GUEST_KEY = "guestConversationId";
 
 /**
  * Store the guestId in local storage
+ *
  * @param guestId - The guestId to store
  */
 export const setGuestIdInLocalStorage = (guestId: string) => {
