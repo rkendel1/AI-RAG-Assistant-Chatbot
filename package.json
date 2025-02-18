@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A chatbot for David Nguyen's personal AI assistant.",
   "main": "dist/index.js",
+  "author": "Son Nguyen",
   "scripts": {
     "build": "tsc",
     "start": "cd client && npm start",
