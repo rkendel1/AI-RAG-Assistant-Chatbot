@@ -4,7 +4,7 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 
 import "./index.css"; // Our global styles
-import { lightTheme as theme } from "./theme"; // Use the named export here
+import { lightTheme as theme } from "./theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { DevSupport } from "@react-buddy/ide-toolbox";
 import { ComponentPreviews, useInitial } from "./dev";
