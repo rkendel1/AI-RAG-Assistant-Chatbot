@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, KeyboardEvent } from "react";
 import {
   Box,
   TextField,
@@ -71,7 +71,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       localStorage.removeItem("guestConversationId");
     }
 
-    // For older browser support, you can fallback to:
+    // Fallback for older browsers:
     if (performance.navigation.type === 1) {
       localStorage.removeItem("guestConversationId");
     }
@@ -79,8 +79,17 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
   // The messages to render
   const [messages, setMessages] = useState<IMessage[]>([]);
+
   // The user's current input
   const [input, setInput] = useState("");
+
+  // Keep track of the user's past messages (only the text).
+  const [messageHistory, setMessageHistory] = useState<string[]>([]);
+  // Current position in messageHistory; -1 => we're not in history mode
+  const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  // Store the user's in-progress text when they jump into history mode
+  const [tempInput, setTempInput] = useState("");
+
   // Loading states
   const [loadingState, setLoadingState] = useState<
     "idle" | "processing" | "generating" | "done"
@@ -127,13 +136,22 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
       let guestId = getGuestIdFromLocalStorage();
 
-      // Add the user's message to local state immediately
+      // Add the user's message to local state
       const userMessage: IMessage = {
         sender: "user",
         text: input,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, userMessage]);
+
+      // Add to history
+      setMessageHistory((prev) => [...prev, input]);
+      // Reset the history index
+      setHistoryIndex(-1);
+      // Clear any saved draft
+      setTempInput("");
+
+      // Clear input
       setInput("");
 
       // Simulate a short delay for UI effect
@@ -178,6 +196,46 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
+  // Handle arrow-up / arrow-down to navigate the user's message history
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowUp") {
+      if (messageHistory.length === 0) return; // no history to show
+
+      e.preventDefault();
+
+      // If not currently in history, store the current input into tempInput
+      if (historyIndex === -1) {
+        setTempInput(input);
+        setHistoryIndex(messageHistory.length - 1);
+        setInput(messageHistory[messageHistory.length - 1]);
+      } else {
+        // Move up the history if possible
+        const newIndex = Math.max(0, historyIndex - 1);
+        setHistoryIndex(newIndex);
+        setInput(messageHistory[newIndex]);
+      }
+    } else if (e.key === "ArrowDown") {
+      if (historyIndex === -1) return; // not in history, do nothing
+
+      e.preventDefault();
+      // Move down in history
+      const newIndex = historyIndex + 1;
+
+      // If we surpass the last history entry, restore tempInput
+      if (newIndex > messageHistory.length - 1) {
+        setHistoryIndex(-1);
+        setInput(tempInput);
+      } else {
+        setHistoryIndex(newIndex);
+        setInput(messageHistory[newIndex]);
+      }
+    } else if (e.key === "Enter") {
+      // Preserve the existing Enter logic
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   // Auto-scroll to the bottom
   useEffect(() => {
     if (scrollRef.current) {
@@ -188,6 +246,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   const handleNewGuestConversation = () => {
     clearGuestIdFromLocalStorage();
     setMessages([]);
+    setMessageHistory([]);
+    setHistoryIndex(-1);
+    setTempInput("");
   };
 
   // A simple animated ellipsis component for "Generating Response..."
@@ -205,7 +266,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   };
 
   // Link styling for user vs. assistant messages:
-  // Because the user's bubble is bright blue, we ensure the link text is white (or close to it).
   const userLinkSx = {
     color: "#fff",
     textDecoration: "underline",
@@ -294,9 +354,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                     }
                     color={isUser ? "white" : theme.palette.text.primary}
                     maxWidth="60%"
-                    whiteSpace="pre-wrap"
                     boxShadow={1}
                     sx={{
+                      transition: "background-color 0.3s",
+                      wordBreak: "break-word",
                       "&:hover": {
                         backgroundColor: isUser
                           ? theme.palette.primary.dark
@@ -304,14 +365,40 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                             ? theme.palette.grey[700]
                             : "#d5d5d5",
                       },
+                      paddingTop: "1.1rem",
                     }}
                   >
-                    {/*
-                      Use ReactMarkdown for all messages,
-                      but apply different link styles for user vs. assistant
-                    */}
                     <ReactMarkdown
                       components={{
+                        // Override paragraph spacing
+                        p: ({ node, children, ...props }) => (
+                          <Box
+                            component="p"
+                            sx={{
+                              margin: 0,
+                              marginBottom: "0.75rem",
+                              lineHeight: 1.5,
+                            }}
+                            {...props}
+                          >
+                            {children}
+                          </Box>
+                        ),
+                        // Override list items spacing
+                        li: ({ node, children, ...props }) => (
+                          <Box
+                            component="li"
+                            sx={{
+                              margin: "0.25rem 0",
+                              lineHeight: 1.4,
+                              listStylePosition: "inside",
+                            }}
+                            {...props}
+                          >
+                            {children}
+                          </Box>
+                        ),
+                        // Handle links (maintain userLinkSx or assistantLinkSx)
                         a: ({ ...props }) => (
                           <MuiLink
                             {...props}
@@ -336,7 +423,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
-              Processing Messsage
+              Processing Message
               <AnimatedEllipsis />
             </Typography>
           </Box>
@@ -365,12 +452,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleSendMessage();
-              }
-            }}
+            onKeyDown={handleKeyDown}
             sx={{
               backgroundColor: theme.palette.background.paper,
               borderRadius: 1,
