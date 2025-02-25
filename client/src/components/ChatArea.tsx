@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import {
   getConversationById,
   sendAuthedChatMessage,
@@ -55,17 +56,99 @@ function linkifyText(text: string): string {
   });
 }
 
+// Default avatar URLs (in public folder)
+const BOT_AVATAR = "/bot.jpg";
+const USER_AVATAR = "/OIP5.png";
+
+/**
+ * A small component to handle the "?" icon with a hoverable bubble that shows
+ * the link and description for the citation. Uses framer-motion for appear/disappear animations.
+ */
+const CitationBubble: React.FC = () => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <Box
+      sx={{ position: "absolute", bottom: "5px", right: "5px", zIndex: 1 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* The “?” icon */}
+      <Box
+        sx={{
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          backgroundColor: "#ffd54f",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          "&:hover": { backgroundColor: "#ffca28" },
+        }}
+      >
+        <HelpOutlineIcon sx={{ fontSize: 16, color: "#000" }} />
+      </Box>
+
+      {/* AnimatePresence for the bubble on hover */}
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: "absolute",
+              bottom: "100%",
+              right: 0,
+              marginBottom: "8px",
+              backgroundColor: "#ffd54f",
+              color: "#000",
+              borderRadius: "8px",
+              padding: "0.4rem 0.6rem",
+              whiteSpace: "nowrap",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+            }}
+          >
+            <Typography sx={{
+              color: "inherit",
+            }}>
+              Source:{" "}
+              <MuiLink
+                href="https://sonnguyenhoang.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: "inherit",
+                  textDecoration: "underline",
+                  transition: "color 0.3s",
+                  "&:hover": {
+                    color: "#1976d2",
+                  },
+              }}
+              >
+                Son (David) Nguyen's Website
+              </MuiLink>
+            </Typography>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Box>
+  );
+};
+
 const ChatArea: React.FC<ChatAreaProps> = ({
-  conversationId,
-  onNewConversation,
-}) => {
+                                             conversationId,
+                                             onNewConversation,
+                                           }) => {
   const theme = useTheme();
 
   // Clear guestConversationId on a page reload:
   useEffect(() => {
     // Modern approach to detect reload:
     const [navEntry] = performance.getEntriesByType(
-      "navigation",
+      "navigation"
     ) as PerformanceNavigationTiming[];
     if (navEntry && navEntry.type === "reload") {
       localStorage.removeItem("guestConversationId");
@@ -124,49 +207,42 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     if (!input.trim()) return;
 
     let currentConvId = conversationId;
-    try {
-      setLoadingState("processing");
 
-      // If authenticated but no conversationId, create a new one
+    try {
+      // If authenticated but no conversationId, create a new one BEFORE setting local messages
       if (isAuthenticated() && !currentConvId) {
         const newConv = await createNewConversation();
         currentConvId = newConv._id;
         if (onNewConversation) onNewConversation(newConv);
       }
 
-      let guestId = getGuestIdFromLocalStorage();
-
-      // Add the user's message to local state
+      // Prepare user message
       const userMessage: IMessage = {
         sender: "user",
         text: input,
         timestamp: new Date(),
       };
+
+      // Immediately update local state
       setMessages((prev) => [...prev, userMessage]);
-
-      // Add to history
       setMessageHistory((prev) => [...prev, input]);
-      // Reset the history index
       setHistoryIndex(-1);
-      // Clear any saved draft
       setTempInput("");
-
-      // Clear input
       setInput("");
+      setLoadingState("processing");
 
-      // Simulate a short delay for UI effect
-      await new Promise((res) => setTimeout(res, 500));
+      // Now let's do a short delay for UI effect (optional)
+      await new Promise((res) => setTimeout(res, 300));
+
       setLoadingState("generating");
 
+      let guestId = getGuestIdFromLocalStorage();
       let answer = "";
       let returnedId = "";
 
       if (isAuthenticated()) {
         // Authenticated user -> /chat/auth
-        const resp = await sendAuthedChatMessage(
-          userMessage.text,
-          currentConvId,
-        );
+        const resp = await sendAuthedChatMessage(userMessage.text, currentConvId!);
         answer = resp.answer;
         returnedId = resp.conversationId;
       } else {
@@ -236,7 +312,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
-  // Auto-scroll to the bottom
+  // Auto-scroll to the bottom when messages change
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -321,98 +397,152 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               sx={{ fontSize: 80, color: theme.palette.text.secondary, mb: 2 }}
             />
             <Typography variant="h6" align="center" color="textSecondary">
-              Hello! 👋 I'm Lumina - David Nguyen's personal assistant. Send me
-              a message to get started! 🚀
+              Hello! 👋 I'm Lumina - David Nguyen's personal assistant. Send me a message to get started! 🚀
             </Typography>
           </Box>
         ) : (
           <AnimatePresence initial={false}>
             {messages.map((msg, idx) => {
               const isUser = msg.sender === "user";
+              // For this example, any message not from "user" is treated as a bot message.
+              const isBot = !isUser;
+
               return (
-                <motion.div
+                // Wrap each message row in a full-width container that aligns content properly.
+                <Box
                   key={idx}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  style={{
+                  sx={{
+                    width: "100%",
                     display: "flex",
                     justifyContent: isUser ? "flex-end" : "flex-start",
-                    marginBottom: "0.5rem",
+                    mb: 1,
                   }}
                 >
-                  <Box
-                    borderRadius="8px"
-                    p="0.5rem 1rem"
-                    bgcolor={
-                      isUser
-                        ? "#1976d2"
-                        : theme.palette.mode === "dark"
-                          ? theme.palette.grey[800]
-                          : "#e0e0e0"
-                    }
-                    color={isUser ? "white" : theme.palette.text.primary}
-                    maxWidth="60%"
-                    boxShadow={1}
-                    sx={{
-                      transition: "background-color 0.3s",
-                      wordBreak: "break-word",
-                      "&:hover": {
-                        backgroundColor: isUser
-                          ? theme.palette.primary.dark
-                          : theme.palette.mode === "dark"
-                            ? theme.palette.grey[700]
-                            : "#d5d5d5",
-                      },
-                      paddingTop: "1.1rem",
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      display: "flex",
+                      flexDirection: isUser ? "row-reverse" : "row",
+                      alignItems: "flex-start",
                     }}
                   >
-                    <ReactMarkdown
-                      components={{
-                        // Override paragraph spacing
-                        p: ({ node, children, ...props }) => (
-                          <Box
-                            component="p"
-                            sx={{
-                              margin: 0,
-                              marginBottom: "0.75rem",
-                              lineHeight: 1.5,
-                            }}
-                            {...props}
-                          >
-                            {children}
-                          </Box>
-                        ),
-                        // Override list items spacing
-                        li: ({ node, children, ...props }) => (
-                          <Box
-                            component="li"
-                            sx={{
-                              margin: "0.25rem 0",
-                              lineHeight: 1.4,
-                              listStylePosition: "inside",
-                            }}
-                            {...props}
-                          >
-                            {children}
-                          </Box>
-                        ),
-                        // Handle links (maintain userLinkSx or assistantLinkSx)
-                        a: ({ ...props }) => (
-                          <MuiLink
-                            {...props}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            sx={isUser ? userLinkSx : assistantLinkSx}
-                          />
-                        ),
+                    {/* Avatar and name */}
+                    <Box display="flex" flexDirection="column" alignItems="center" mx={1}>
+                      <img
+                        src={isUser ? USER_AVATAR : BOT_AVATAR}
+                        alt="avatar"
+                        style={{
+                          borderRadius: "50%",
+                          width: "40px",
+                          height: "40px",
+                          marginBottom: "4px",
+                          transition: "transform 0.3s",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.transform =
+                            "scale(1.05)";
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.transform =
+                            "scale(1.0)";
+                        }}
+                      />
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontSize: "0.7rem",
+                          opacity: 0.8,
+                          transition: "color 0.3s",
+                          "&:hover": {
+                            color: theme.palette.primary.main,
+                          },
+                        }}
+                      >
+                        {isUser ? "You" : "Lumina"}
+                      </Typography>
+                    </Box>
+
+                    {/* Message bubble */}
+                    <Box
+                      borderRadius="8px"
+                      p="0.5rem 1rem"
+                      bgcolor={
+                        isUser
+                          ? "#1976d2"
+                          : theme.palette.mode === "dark"
+                            ? theme.palette.grey[800]
+                            : "#e0e0e0"
+                      }
+                      color={isUser ? "white" : theme.palette.text.primary}
+                      maxWidth="60%"
+                      boxShadow={1}
+                      sx={{
+                        transition: "background-color 0.3s",
+                        wordBreak: "break-word",
+                        "&:hover": {
+                          backgroundColor: isUser
+                            ? theme.palette.primary.dark
+                            : theme.palette.mode === "dark"
+                              ? theme.palette.grey[700]
+                              : "#d5d5d5",
+                        },
+                        paddingTop: "1.1rem",
+                        position: "relative",
                       }}
                     >
-                      {linkifyText(msg.text)}
-                    </ReactMarkdown>
-                  </Box>
-                </motion.div>
+                      <ReactMarkdown
+                        components={{
+                          // Override paragraph spacing
+                          p: ({ node, children, ...props }) => (
+                            <Box
+                              component="p"
+                              sx={{
+                                margin: 0,
+                                marginBottom: "0.75rem",
+                                lineHeight: 1.5,
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          // Override list items spacing
+                          li: ({ node, children, ...props }) => (
+                            <Box
+                              component="li"
+                              sx={{
+                                margin: "0.25rem 0",
+                                lineHeight: 1.4,
+                                listStylePosition: "inside",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          // Handle links (using different styling for user vs. bot messages)
+                          a: ({ ...props }) => (
+                            <MuiLink
+                              {...props}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              sx={isUser ? userLinkSx : assistantLinkSx}
+                            />
+                          ),
+                        }}
+                      >
+                        {linkifyText(msg.text)}
+                      </ReactMarkdown>
+
+                      {/* Always render the citation bubble for bot messages */}
+                      {isBot && <CitationBubble />}
+                    </Box>
+                  </motion.div>
+                </Box>
               );
             })}
           </AnimatePresence>
@@ -423,8 +553,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
-              Processing Message
-              <AnimatedEllipsis />
+              Processing Message<AnimatedEllipsis />
             </Typography>
           </Box>
         )}
@@ -432,8 +561,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
-              Generating Response
-              <AnimatedEllipsis />
+              Generating Response<AnimatedEllipsis />
             </Typography>
           </Box>
         )}
