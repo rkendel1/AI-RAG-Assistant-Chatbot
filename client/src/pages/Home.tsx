@@ -11,6 +11,13 @@ interface HomeProps {
   darkMode: boolean;
 }
 
+/**
+ * The Home component
+ *
+ * @param onToggleTheme The toggle theme function
+ * @param darkMode The dark mode state
+ * @constructor The Home component
+ */
 const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [conversations, setConversations] = useState<IConversation[]>([]);
@@ -31,10 +38,16 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
     }
   }, [isMobile]);
 
+  /**
+   * Toggle the sidebar open state
+   */
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  /**
+   * Load the conversations from the API
+   */
   const loadConversations = async () => {
     setLoading(true);
 
@@ -56,12 +69,20 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
     loadConversations();
   }, []);
 
-  // Updated to accept string | null
+  /**
+   * Handle selecting a conversation
+   *
+   * @param id The conversation ID
+   */
   const handleSelectConversation = (id: string | null) => {
     setSelectedConversationId(id);
   };
 
-  // Callback when a new conversation is created (either automatically or via the new convo button)
+  /**
+   * Handle creating a new conversation
+   *
+   * @param conv The new conversation
+   */
   const handleNewConversation = (conv: IConversation) => {
     setSelectedConversationId(conv._id);
     loadConversations();

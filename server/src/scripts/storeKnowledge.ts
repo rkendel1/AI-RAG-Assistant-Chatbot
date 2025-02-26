@@ -7,9 +7,11 @@ dotenv.config();
 // Initialize Google AI API
 // @ts-ignore
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "models/text-embedding-004" }); // ✅ FIXED MODEL NAME
+const model = genAI.getGenerativeModel({ model: "models/text-embedding-004" });
 
-// Sample knowledge base
+// Sample knowledge base - this is my personal knowledge base
+// In addition, I also use Dr. Ringel's AI RAG loader to upsert additional documents to Pinecone
+// So the bot now has access to a vast amount of knowledge
 const knowledgeBase = [
   {
     id: "1",
@@ -212,7 +214,9 @@ const knowledgeBase = [
   },
 ];
 
-// Function to generate embeddings and store in Pinecone
+/**
+ * Stores knowledge base items in Pinecone.
+ */
 async function storeKnowledge() {
   const vectors = [];
 
@@ -246,5 +250,5 @@ async function storeKnowledge() {
   }
 }
 
-// Run the function
+// Run the function to store knowledge base in Pinecone
 storeKnowledge();

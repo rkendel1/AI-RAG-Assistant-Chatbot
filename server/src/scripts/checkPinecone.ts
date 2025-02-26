@@ -1,5 +1,8 @@
 import { index } from "../services/pineconeClient";
 
+/**
+ * Check the Pinecone index status and print the information.
+ */
 async function checkIndex() {
   try {
     const stats = await index.describeIndexStats();

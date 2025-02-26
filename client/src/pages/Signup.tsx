@@ -14,6 +14,11 @@ import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
+/**
+ * The Signup component
+ *
+ * @constructor The Signup component
+ */
 const Signup: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +29,9 @@ const Signup: React.FC = () => {
 
   const navigate = useNavigate();
 
+  /**
+   * Handle the signup button click
+   */
   const handleSignup = async () => {
     if (password !== confirmPassword) {
       alert("Passwords don't match");

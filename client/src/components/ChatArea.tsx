@@ -38,6 +38,9 @@ interface ChatAreaProps {
 /**
  * A helper function that detects plain-text URLs (like "movieverse.com" or "https://xyz")
  * and turns them into Markdown links so that ReactMarkdown will render them as clickable <a> elements.
+ *
+ * @param text (string): The text to process.
+ * @returns (string): The processed text with URLs turned into Markdown links.
  */
 function linkifyText(text: string): string {
   // Regex that detects:
@@ -140,6 +143,13 @@ const CitationBubble: React.FC = () => {
   );
 };
 
+/**
+ * The main chat area component that displays messages and handles user input.
+ *
+ * @param conversationId (string | null): If authenticated and you have a known conversation _id, pass it in.
+ * @param onNewConversation (function): Called if you create a brand new conversation for an authenticated user.
+ * @constructor The main chat area component.
+ */
 const ChatArea: React.FC<ChatAreaProps> = ({
   conversationId,
   onNewConversation,
@@ -170,8 +180,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
   // Keep track of the user's past messages (only the text).
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
+
   // Current position in messageHistory; -1 => we're not in history mode
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+
   // Store the user's in-progress text when they jump into history mode
   const [tempInput, setTempInput] = useState("");
 
@@ -192,7 +204,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   }, [conversationId]);
 
-  // Load the existing conversation from the server
+  /**
+   * Load a conversation by its ID.
+   *
+   * @param id The conversation ID to load.
+   */
   const loadConversation = async (id: string) => {
     try {
       setLoadingConversation(true);
@@ -205,6 +221,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
+  /**
+   * Send the user's message to the server and receive a response.
+   */
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
@@ -277,7 +296,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
-  // Handle arrow-up / arrow-down to navigate the user's message history
+  /**
+   * Handle keyboard events for history navigation.
+   *
+   * @param e The keyboard event.
+   */
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "ArrowUp") {
       if (messageHistory.length === 0) return; // no history to show
@@ -324,6 +347,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   }, [messages]);
 
+  /**
+   * Handle starting a new conversation for a guest user.
+   */
   const handleNewGuestConversation = () => {
     clearGuestIdFromLocalStorage();
     setMessages([]);
@@ -332,7 +358,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     setTempInput("");
   };
 
-  // A simple animated ellipsis component for "Generating Response..."
+  /**
+   * A simple component that displays an animated ellipsis.
+   *
+   * @constructor The animated ellipsis component.
+   */
   const AnimatedEllipsis: React.FC = () => {
     const [dotCount, setDotCount] = useState(0);
 

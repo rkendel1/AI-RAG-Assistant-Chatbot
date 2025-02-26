@@ -8,6 +8,12 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "models/text-embedding-004" });
 
+/**
+ * Searches the knowledge base for relevant information based on the query.
+ *
+ * @param query - The search query.
+ * @param topK - The number of top results to return.
+ */
 async function searchKnowledge(query: string, topK = 3) {
   try {
     console.log(`🔍 Searching for: "${query}"...`);

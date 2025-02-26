@@ -29,6 +29,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { IConversation } from "../types/conversation";
 
+/**
+ * Props: The Navbar component props
+ */
 interface NavbarProps {
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
@@ -39,6 +42,18 @@ interface NavbarProps {
   setConversations: React.Dispatch<React.SetStateAction<IConversation[]>>;
 }
 
+/**
+ * The Navbar component
+ *
+ * @param sidebarOpen The sidebar open state
+ * @param onToggleSidebar The sidebar toggle function
+ * @param onRefreshConversations The refresh conversations function
+ * @param onSelectConversation The select conversation function
+ * @param onToggleTheme The toggle theme function
+ * @param darkMode The dark mode state
+ * @param setConversations The set conversations function
+ * @constructor The Navbar component
+ */
 const Navbar: React.FC<NavbarProps> = ({
   sidebarOpen,
   onToggleSidebar,
@@ -62,16 +77,27 @@ const Navbar: React.FC<NavbarProps> = ({
   const colors = ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#9D4EDD"];
   const debounceTimerRef = useRef<number | null>(null);
 
-  // Opens the menu anchor
+  /**
+   * Opens the menu anchor
+   *
+   * @param event The mouse event
+   */
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // Closes the menu anchor
+  /**
+   * Closes the menu anchor
+   */
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
+  /**
+   * Debounces the search term
+   *
+   * @param value The search value
+   */
   const debouncedSearch = (value: string) => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
@@ -93,6 +119,11 @@ const Navbar: React.FC<NavbarProps> = ({
     }, 500);
   };
 
+  /**
+   * Handles the search change
+   *
+   * @param e The change event
+   */
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -100,6 +131,9 @@ const Navbar: React.FC<NavbarProps> = ({
     debouncedSearch(value);
   };
 
+  /**
+   * Creates a new conversation
+   */
   const handleCreateNewConversation = async () => {
     setNewConvLoading(true);
 
@@ -127,11 +161,17 @@ const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
+  /**
+   * Logs out the user
+   */
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  /**
+   * Toggles the theme
+   */
   const handleToggleTheme = () => {
     onToggleTheme();
     localStorage.setItem("darkMode", JSON.stringify(!darkMode));

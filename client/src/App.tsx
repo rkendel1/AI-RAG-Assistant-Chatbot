@@ -9,6 +9,11 @@ import NotFoundPage from "./pages/NotFoundPage";
 import { ThemeProvider } from "@mui/material/styles";
 import { lightTheme, darkTheme } from "./theme";
 
+/**
+ * The main App component
+ *
+ * @constructor The App component
+ */
 const App: React.FC = () => {
   // Initialize dark mode from local storage; default to false if not set.
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -16,6 +21,9 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : false;
   });
 
+  /**
+   * Toggle the theme mode
+   */
   const toggleThemeMode = () => {
     setDarkMode((prev) => {
       const newMode = !prev;

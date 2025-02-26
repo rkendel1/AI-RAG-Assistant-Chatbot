@@ -18,6 +18,11 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SecurityIcon from "@mui/icons-material/Security";
 
+/**
+ * The LandingPage component
+ *
+ * @constructor The LandingPage component
+ */
 const LandingPage: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();

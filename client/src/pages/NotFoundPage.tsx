@@ -10,6 +10,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
+/**
+ * The NotFoundPage component
+ *
+ * @constructor The NotFoundPage component
+ */
 const NotFoundPage: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();

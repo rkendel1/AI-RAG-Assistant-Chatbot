@@ -14,6 +14,11 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { verifyEmail, resetPassword } from "../services/api";
 
+/**
+ * The ForgotPassword component
+ *
+ * @constructor The ForgotPassword component
+ */
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
@@ -27,6 +32,9 @@ const ForgotPassword: React.FC = () => {
 
   const navigate = useNavigate();
 
+  /**
+   * Handle the verify email button click
+   */
   const handleVerifyEmail = async () => {
     setError("");
     setLoadingVerify(true);
@@ -43,6 +51,9 @@ const ForgotPassword: React.FC = () => {
     setLoadingVerify(false);
   };
 
+  /**
+   * Handle the reset password button click
+   */
   const handleResetPassword = async () => {
     setError("");
     if (newPassword !== confirmPassword) {

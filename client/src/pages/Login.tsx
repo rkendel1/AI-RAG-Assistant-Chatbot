@@ -14,6 +14,11 @@ import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
+/**
+ * The Login component
+ *
+ * @constructor The Login component
+ */
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +27,9 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
+  /**
+   * Handle the login button click
+   */
   const handleLogin = async () => {
     setLoadingLogin(true);
     try {

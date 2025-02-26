@@ -15,6 +15,9 @@ import { IConversation } from "../types/conversation";
 import { useTheme } from "@mui/material/styles";
 import { renameConversation, deleteConversation } from "../services/api";
 
+/**
+ * Props: The Sidebar component props
+ */
 interface SidebarProps {
   open: boolean;
   conversations: IConversation[];
@@ -25,6 +28,18 @@ interface SidebarProps {
   loadingConversations: boolean;
 }
 
+/**
+ * The Sidebar component
+ *
+ * @param open The sidebar open state
+ * @param conversations The list of conversations
+ * @param onSelectConversation The select conversation function
+ * @param selectedConversationId The selected conversation ID
+ * @param onRefresh The refresh conversations function
+ * @param isMobile The mobile state
+ * @param loadingConversations The loading conversations state
+ * @constructor The Sidebar component
+ */
 const Sidebar: React.FC<SidebarProps> = ({
   open,
   conversations,
@@ -44,6 +59,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   const topValue = isMobile ? "56px" : 0;
   const heightValue = isMobile ? "calc(100vh - 64px)" : "auto";
 
+  /**
+   * Handle renaming a conversation
+   *
+   * @param convId The conversation ID
+   * @param currentTitle The current conversation title
+   */
   const handleRename = async (convId: string, currentTitle: string) => {
     const newTitle = window.prompt(
       "Enter new conversation name:",
@@ -62,6 +83,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  /**
+   * Handle deleting a conversation
+   *
+   * @param convId The conversation ID
+   */
   const handleDelete = async (convId: string) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this conversation?",
