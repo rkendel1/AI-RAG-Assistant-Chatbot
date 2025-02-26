@@ -24,6 +24,7 @@ import {
 import { IMessage, IConversation } from "../types/conversation";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
+import CopyIcon from "./CopyIcon";
 
 /**
  * Props:
@@ -356,6 +357,15 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      // Optionally show a brief notification (not implemented here)
+    } catch (err) {
+      console.error("Failed to copy text:", err);
+    }
+  };
+
   // Auto-scroll to bottom only if the user is already near the bottom.
   useEffect(() => {
     if (scrollRef.current && isAtBottom) {
@@ -469,10 +479,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <AnimatePresence initial={false}>
             {messages.map((msg, idx) => {
               const isUser = msg.sender === "user";
-              // For this example, any message not from "user" is treated as a bot message.
               const isBot = !isUser;
               return (
-                // Wrap each message row in a full-width container that aligns content properly.
                 <Box
                   key={idx}
                   sx={{
@@ -494,7 +502,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                       alignItems: "flex-start",
                     }}
                   >
-                    {/* Avatar and name */}
                     <Box
                       display="flex"
                       flexDirection="column"
@@ -535,8 +542,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                         {isUser ? "You" : "Lumina"}
                       </Typography>
                     </Box>
-
-                    {/* Message bubble */}
                     <Box
                       borderRadius="8px"
                       p="0.5rem 1rem"
@@ -553,6 +558,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                       sx={{
                         transition: "background-color 0.3s",
                         wordBreak: "break-word",
+                        overflow: "visible",
                         "&:hover": {
                           backgroundColor: isUser
                             ? theme.palette.primary.dark
@@ -564,6 +570,35 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                         position: "relative",
                       }}
                     >
+                      {/* Copy icon for bot messages */}
+                      {isBot && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: 5,
+                            right: 5,
+                            zIndex: 2,
+                          }}
+                        >
+                          <motion.div
+                            whileHover={{ scale: 1.2 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <IconButton
+                              size="small"
+                              onClick={() => handleCopy(msg.text)}
+                              sx={{
+                                backgroundColor: "rgba(255,255,255,0.7)",
+                                "&:hover": {
+                                  backgroundColor: "rgba(255,255,255,0.9)",
+                                },
+                              }}
+                            >
+                              <CopyIcon text={msg.text} />
+                            </IconButton>
+                          </motion.div>
+                        </Box>
+                      )}
                       <ReactMarkdown
                         components={{
                           h1: ({ node, children, ...props }) => (
@@ -667,7 +702,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                               sx={{
                                 margin: "0.25rem 0",
                                 lineHeight: 1.4,
-                                "& p": { margin: 0 }, // Reset inner paragraph margin
+                                listStylePosition: "inside",
+                                "& p": { margin: 0 },
                               }}
                               {...props}
                             >
@@ -734,6 +770,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                     borderRadius: "4px",
                                     overflowX: "auto",
                                     margin: "1rem 0",
+                                    color: "#333",
                                   }}
                                 >
                                   <code className={className} {...props}>
@@ -748,6 +785,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                     background: "#f5f5f5",
                                     padding: "0.2rem 0.4rem",
                                     borderRadius: "4px",
+                                    color: "#333",
                                   }}
                                   className={className}
                                   {...props}
@@ -779,9 +817,21 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 width: "100%",
                                 borderCollapse: "collapse",
                                 marginBottom: "1rem",
+                                overflowX: "auto",
+                                display: "block",
                               }}
                               {...props}
                             >
+                              {children}
+                            </Box>
+                          ),
+                          thead: ({ node, children, ...props }) => (
+                            <Box component="thead" {...props}>
+                              {children}
+                            </Box>
+                          ),
+                          tbody: ({ node, children, ...props }) => (
+                            <Box component="tbody" {...props}>
                               {children}
                             </Box>
                           ),
@@ -814,8 +864,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                       >
                         {linkifyText(msg.text)}
                       </ReactMarkdown>
-
-                      {/* Always render the citation bubble for bot messages */}
                       {isBot && (
                         <CitationBubble
                           isAboutMe={isMessageAboutMe(msg.text)}
