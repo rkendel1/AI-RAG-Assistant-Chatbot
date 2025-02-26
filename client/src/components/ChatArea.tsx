@@ -699,7 +699,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                               sx={{
                                 margin: "0.25rem 0",
                                 lineHeight: 1.4,
-                                listStylePosition: "inside",
                                 "& p": { margin: 0 },
                               }}
                               {...props}
