@@ -13,9 +13,6 @@ import { motion } from "framer-motion";
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   const [copied, setCopied] = useState(false);
 
-  /**
-   * Handle the click event
-   */
   const handleClick = async () => {
     try {
       await navigator.clipboard.writeText(text);
@@ -33,19 +30,29 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   }, [copied]);
 
   return (
-    <motion.div whileHover={{ scale: 0.92 }} whileTap={{ scale: 0.9 }}>
+    <motion.div
+      style={{
+        display: "inline-flex",
+        width: "fit-content",
+        height: "fit-content",
+      }}
+      whileHover={{ scale: 1.0 }}
+      whileTap={{ scale: 0.9 }}
+    >
       <IconButton
         size="small"
         onClick={handleClick}
         sx={{
+          fontSize: 13,
           backgroundColor: "rgba(255,255,255,0.7)",
+          color: "#555",
           "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
         }}
       >
         {copied ? (
-          <CheckIcon sx={{ fontSize: 16, color: "green" }} />
+          <CheckIcon sx={{ fontSize: 13, color: "green" }} />
         ) : (
-          <ContentCopyIcon sx={{ fontSize: 16 }} />
+          <ContentCopyIcon sx={{ fontSize: 13 }} />
         )}
       </IconButton>
     </motion.div>

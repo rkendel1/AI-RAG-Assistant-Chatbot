@@ -536,6 +536,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                           fontSize: "0.7rem",
                           opacity: 0.8,
                           transition: "color 0.3s",
+                          color:
+                            theme.palette.mode === "dark" ? "white" : "black",
                           "&:hover": { color: theme.palette.primary.main },
                         }}
                       >
