@@ -522,7 +522,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                         onMouseEnter={(e) => {
                           (
                             e.currentTarget as HTMLImageElement
-                          ).style.transform = "scale(1.05)";
+                          ).style.transform = "scale(1.1)";
                         }}
                         onMouseLeave={(e) => {
                           (
@@ -586,18 +586,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                             whileHover={{ scale: 1.2 }}
                             whileTap={{ scale: 0.9 }}
                           >
-                            <IconButton
-                              size="small"
-                              onClick={() => handleCopy(msg.text)}
-                              sx={{
-                                backgroundColor: "rgba(255,255,255,0.7)",
-                                "&:hover": {
-                                  backgroundColor: "rgba(255,255,255,0.9)",
-                                },
-                              }}
-                            >
+                            {msg.text.length > 100 ? (
                               <CopyIcon text={msg.text} />
-                            </IconButton>
+                            ) : null}
                           </motion.div>
                         </Box>
                       )}
