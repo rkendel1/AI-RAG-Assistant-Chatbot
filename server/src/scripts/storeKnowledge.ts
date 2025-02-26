@@ -11,7 +11,7 @@ const model = genAI.getGenerativeModel({ model: "models/text-embedding-004" });
 
 // Sample knowledge base - this is my personal knowledge base
 // In addition, I also use Dr. Ringel's AI RAG loader to upsert additional documents to Pinecone
-// So the bot now has access to a vast amount of knowledge
+// So the bot now has access to a vast amount of knowledge about me
 const knowledgeBase = [
   {
     id: "1",
