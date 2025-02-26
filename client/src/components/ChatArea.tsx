@@ -64,19 +64,27 @@ const BOT_AVATAR = "/bot.jpg";
 const USER_AVATAR = "/OIP5.png";
 
 /**
- * A small component to handle the "?" icon with a hoverable bubble that shows
- * the link and description for the citation. Uses framer-motion for appear/disappear animations.
+ * Props for CitationBubble.
  */
-const CitationBubble: React.FC = () => {
+interface CitationBubbleProps {
+  isAboutMe: boolean;
+}
+
+/**
+ * A small component to display the citation bubble.
+ *
+ * Uses framer-motion for appear/disappear animations.
+ */
+const CitationBubble: React.FC<CitationBubbleProps> = ({ isAboutMe }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
     <Box
-      sx={{ position: "absolute", bottom: "5px", right: "5px", zIndex: 1 }}
+      sx={{ position: "absolute", bottom: "5px", right: "5px", zIndex: 10000 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* The “?” icon */}
+      {/* The "?" icon */}
       <Box
         sx={{
           width: 20,
@@ -92,7 +100,6 @@ const CitationBubble: React.FC = () => {
       >
         <HelpOutlineIcon sx={{ fontSize: 16, color: "#000" }} />
       </Box>
-
       {/* AnimatePresence for the bubble on hover */}
       <AnimatePresence>
         {hovered && (
@@ -114,34 +121,40 @@ const CitationBubble: React.FC = () => {
               boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
             }}
           >
-            <Typography
-              sx={{
-                color: "inherit",
-              }}
-            >
-              Source:{" "}
-              <MuiLink
-                href="https://sonnguyenhoang.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  color: "inherit",
-                  textDecoration: "underline",
-                  transition: "color 0.3s",
-                  "&:hover": {
-                    color: "#1976d2",
-                  },
-                }}
-              >
-                Son (David) Nguyen's Website
-              </MuiLink>
-            </Typography>
+            {isAboutMe ? (
+              <Typography sx={{ color: "inherit" }}>
+                Source:{" "}
+                <MuiLink
+                  href="https://sonnguyenhoang.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    color: "inherit",
+                    textDecoration: "underline",
+                    transition: "color 0.3s",
+                    "&:hover": { color: "#1976d2" },
+                  }}
+                >
+                  Son (David) Nguyen's Website
+                </MuiLink>
+              </Typography>
+            ) : (
+              <Typography sx={{ color: "inherit" }}>
+                Source: General AI Knowledge
+              </Typography>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
     </Box>
   );
 };
+
+function isMessageAboutMe(text: string): boolean {
+  const lower = text.toLowerCase();
+  const pattern = /(?=.*\bnguyen\b)(?=.*\b(?:david|son)\b)/;
+  return pattern.test(lower);
+}
 
 /**
  * The main chat area component that displays messages and handles user input.
@@ -165,7 +178,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     if (navEntry && navEntry.type === "reload") {
       localStorage.removeItem("guestConversationId");
     }
-
     // Fallback for older browsers:
     if (performance.navigation.type === 1) {
       localStorage.removeItem("guestConversationId");
@@ -193,6 +205,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   >("idle");
   const [loadingConversation, setLoadingConversation] = useState(false);
 
+  // State to control auto-scrolling. We'll only auto-scroll if the user is already near the bottom.
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // If we have an authenticated conversationId, load it from the server
@@ -214,6 +229,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       setLoadingConversation(true);
       const conv = await getConversationById(id);
       setMessages(conv.messages);
+      console.log("Loaded conversation:", conv);
     } catch (err) {
       console.error("Error loading conversation:", err);
     } finally {
@@ -252,7 +268,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       setInput("");
       setLoadingState("processing");
 
-      // Now let's do a short delay for UI effect (optional)
+      // Short delay for UI effect
       await new Promise((res) => setTimeout(res, 300));
 
       setLoadingState("generating");
@@ -274,14 +290,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         const resp = await sendGuestChatMessage(userMessage.text, guestId);
         answer = resp.answer;
         returnedId = resp.guestId;
-
         // If we had no guestId, store the new one
         if (!guestId) {
           setGuestIdInLocalStorage(returnedId);
         }
       }
 
-      // Add the AI's response
+      // Add the AI's response locally
       const botMessage: IMessage = {
         sender: "assistant",
         text: answer,
@@ -290,6 +305,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       setMessages((prev) => [...prev, botMessage]);
 
       setLoadingState("done");
+
+      // Reload the conversation from the server to ensure we display all messages from the DB
+      if (currentConvId) {
+        await loadConversation(currentConvId);
+      }
     } catch (err) {
       console.error("Error sending message:", err);
       setLoadingState("done");
@@ -304,9 +324,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "ArrowUp") {
       if (messageHistory.length === 0) return; // no history to show
-
       e.preventDefault();
-
       // If not currently in history, store the current input into tempInput
       if (historyIndex === -1) {
         setTempInput(input);
@@ -320,11 +338,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       }
     } else if (e.key === "ArrowDown") {
       if (historyIndex === -1) return; // not in history, do nothing
-
       e.preventDefault();
       // Move down in history
       const newIndex = historyIndex + 1;
-
       // If we surpass the last history entry, restore tempInput
       if (newIndex > messageHistory.length - 1) {
         setHistoryIndex(-1);
@@ -340,12 +356,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
-  // Auto-scroll to the bottom when messages change
+  // Auto-scroll to bottom only if the user is already near the bottom.
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && isAtBottom) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isAtBottom]);
 
   /**
    * Handle starting a new conversation for a guest user.
@@ -365,14 +381,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({
    */
   const AnimatedEllipsis: React.FC = () => {
     const [dotCount, setDotCount] = useState(0);
-
     useEffect(() => {
       const interval = setInterval(() => {
         setDotCount((prev) => (prev + 1) % 4);
       }, 500);
       return () => clearInterval(interval);
     }, []);
-
     return <span>{".".repeat(dotCount)}</span>;
   };
 
@@ -396,7 +410,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   };
 
   return (
-    <Box display="flex" flexDirection="column" height="100%">
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100%"
+      sx={{ overflowX: "hidden" }}
+    >
       {/* Main chat area - displays messages */}
       <Box
         flex="1"
@@ -404,7 +423,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         padding="1rem"
         ref={scrollRef}
         bgcolor={theme.palette.background.default}
-        sx={{ transition: "background-color 0.3s ease" }}
+        sx={{ transition: "background-color 0.3s ease", overflowX: "hidden" }}
+        onScroll={() => {
+          if (scrollRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+            // Determine if user is within 50px of the bottom
+            setIsAtBottom(scrollHeight - scrollTop - clientHeight < 50);
+          }
+        }}
       >
         {loadingConversation && (
           <Box display="flex" justifyContent="center" mt={2}>
@@ -420,7 +446,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         )}
 
         {/* If no messages yet, show placeholder */}
-        {messages.length === 0 && !loadingConversation ? (
+        {messages.length === 0 &&
+        !loadingConversation &&
+        loadingState !== "generating" &&
+        loadingState !== "processing" ? (
           <Box
             display="flex"
             flexDirection="column"
@@ -442,13 +471,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               const isUser = msg.sender === "user";
               // For this example, any message not from "user" is treated as a bot message.
               const isBot = !isUser;
-
               return (
                 // Wrap each message row in a full-width container that aligns content properly.
                 <Box
                   key={idx}
                   sx={{
                     width: "100%",
+                    maxWidth: "100%",
                     display: "flex",
                     justifyContent: isUser ? "flex-end" : "flex-start",
                     mb: 1,
@@ -500,9 +529,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                           fontSize: "0.7rem",
                           opacity: 0.8,
                           transition: "color 0.3s",
-                          "&:hover": {
-                            color: theme.palette.primary.main,
-                          },
+                          "&:hover": { color: theme.palette.primary.main },
                         }}
                       >
                         {isUser ? "You" : "Lumina"}
@@ -539,7 +566,88 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                     >
                       <ReactMarkdown
                         components={{
-                          // Override paragraph spacing
+                          h1: ({ node, children, ...props }) => (
+                            <Box
+                              component="h1"
+                              sx={{
+                                fontSize: "2rem",
+                                margin: "1rem 0",
+                                fontWeight: "bold",
+                                borderBottom: "2px solid #eee",
+                                paddingBottom: "0.5rem",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          h2: ({ node, children, ...props }) => (
+                            <Box
+                              component="h2"
+                              sx={{
+                                fontSize: "1.75rem",
+                                margin: "1rem 0",
+                                fontWeight: "bold",
+                                borderBottom: "1px solid #eee",
+                                paddingBottom: "0.5rem",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          h3: ({ node, children, ...props }) => (
+                            <Box
+                              component="h3"
+                              sx={{
+                                fontSize: "1.5rem",
+                                margin: "1rem 0",
+                                fontWeight: "bold",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          h4: ({ node, children, ...props }) => (
+                            <Box
+                              component="h4"
+                              sx={{
+                                fontSize: "1.25rem",
+                                margin: "1rem 0",
+                                fontWeight: "bold",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          h5: ({ node, children, ...props }) => (
+                            <Box
+                              component="h5"
+                              sx={{
+                                fontSize: "1rem",
+                                margin: "1rem 0",
+                                fontWeight: "bold",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          h6: ({ node, children, ...props }) => (
+                            <Box
+                              component="h6"
+                              sx={{
+                                fontSize: "0.875rem",
+                                margin: "1rem 0",
+                                fontWeight: "bold",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
                           p: ({ node, children, ...props }) => (
                             <Box
                               component="p"
@@ -553,28 +661,154 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                               {children}
                             </Box>
                           ),
-                          // Override list items spacing
                           li: ({ node, children, ...props }) => (
                             <Box
                               component="li"
                               sx={{
                                 margin: "0.25rem 0",
                                 lineHeight: 1.4,
-                                listStylePosition: "inside",
+                                "& p": { margin: 0 }, // Reset inner paragraph margin
                               }}
                               {...props}
                             >
                               {children}
                             </Box>
                           ),
-                          // Handle links (using different styling for user vs. bot messages)
                           a: ({ ...props }) => (
                             <MuiLink
                               {...props}
                               target="_blank"
                               rel="noopener noreferrer"
-                              sx={isUser ? userLinkSx : assistantLinkSx}
+                              sx={{
+                                color: "inherit",
+                                textDecoration: "underline",
+                                "&:hover": {
+                                  color: "#1976d2",
+                                  cursor: "pointer",
+                                },
+                              }}
                             />
+                          ),
+                          blockquote: ({ node, children, ...props }) => (
+                            <Box
+                              component="blockquote"
+                              sx={{
+                                borderLeft: "4px solid #ddd",
+                                margin: "1rem 0",
+                                paddingLeft: "1rem",
+                                fontStyle: "italic",
+                                color: "#555",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          hr: ({ node, ...props }) => (
+                            <Box
+                              component="hr"
+                              sx={{
+                                border: "none",
+                                borderTop: "1px solid #eee",
+                                margin: "1rem 0",
+                              }}
+                              {...props}
+                            />
+                          ),
+                          code: ({
+                            node,
+                            inline,
+                            className,
+                            children,
+                            ...props
+                          }) => {
+                            const match = /language-(\w+)/.exec(
+                              className || "",
+                            );
+                            if (!inline && match) {
+                              return (
+                                <pre
+                                  style={{
+                                    background: "#f5f5f5",
+                                    padding: "1rem",
+                                    borderRadius: "4px",
+                                    overflowX: "auto",
+                                    margin: "1rem 0",
+                                  }}
+                                >
+                                  <code className={className} {...props}>
+                                    {children}
+                                  </code>
+                                </pre>
+                              );
+                            } else {
+                              return (
+                                <code
+                                  style={{
+                                    background: "#f5f5f5",
+                                    padding: "0.2rem 0.4rem",
+                                    borderRadius: "4px",
+                                  }}
+                                  className={className}
+                                  {...props}
+                                >
+                                  {children}
+                                </code>
+                              );
+                            }
+                          },
+                          pre: ({ node, children, ...props }) => (
+                            <Box
+                              component="pre"
+                              sx={{
+                                background: "#f5f5f5",
+                                padding: "1rem",
+                                borderRadius: "4px",
+                                overflowX: "auto",
+                                margin: "1rem 0",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          table: ({ node, children, ...props }) => (
+                            <Box
+                              component="table"
+                              sx={{
+                                width: "100%",
+                                borderCollapse: "collapse",
+                                marginBottom: "1rem",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          th: ({ node, children, ...props }) => (
+                            <Box
+                              component="th"
+                              sx={{
+                                border: "1px solid #ddd",
+                                padding: "0.5rem",
+                                backgroundColor: "#f5f5f5",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
+                          ),
+                          td: ({ node, children, ...props }) => (
+                            <Box
+                              component="td"
+                              sx={{
+                                border: "1px solid #ddd",
+                                padding: "0.5rem",
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </Box>
                           ),
                         }}
                       >
@@ -582,7 +816,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                       </ReactMarkdown>
 
                       {/* Always render the citation bubble for bot messages */}
-                      {isBot && <CitationBubble />}
+                      {isBot && (
+                        <CitationBubble
+                          isAboutMe={isMessageAboutMe(msg.text)}
+                        />
+                      )}
                     </Box>
                   </motion.div>
                 </Box>
@@ -601,6 +839,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             </Typography>
           </Box>
         )}
+
         {loadingState === "generating" && (
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
@@ -642,9 +881,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               borderRadius: 1,
               marginLeft: "0.5rem",
               transition: "background-color 0.3s ease",
-              "&:hover": {
-                backgroundColor: theme.palette.primary.dark,
-              },
+              "&:hover": { backgroundColor: theme.palette.primary.dark },
             }}
           >
             <SendIcon />

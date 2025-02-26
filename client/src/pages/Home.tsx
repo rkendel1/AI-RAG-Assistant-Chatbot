@@ -50,7 +50,6 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
    */
   const loadConversations = async () => {
     setLoading(true);
-
     try {
       if (isAuthenticated()) {
         const resp = await getConversations();
@@ -103,7 +102,7 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
         onSelectConversation={handleSelectConversation}
         onToggleTheme={onToggleTheme}
         darkMode={darkMode}
-        setConversations={setConversations} // For live search
+        setConversations={setConversations}
       />
       <Box display="flex" flex="1" overflow="hidden">
         <Sidebar
@@ -115,7 +114,15 @@ const Home: React.FC<HomeProps> = ({ onToggleTheme, darkMode }) => {
           isMobile={isMobile}
           loadingConversations={loading}
         />
-        <Box flex="1">
+        {/* Fix ChatArea container to have a fixed height and hidden overflow */}
+        <Box
+          flex="1"
+          sx={{
+            height: "100%",
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
           <ChatArea
             conversationId={selectedConversationId}
             onNewConversation={handleNewConversation}
