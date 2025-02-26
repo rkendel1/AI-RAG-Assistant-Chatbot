@@ -111,9 +111,11 @@ const CitationBubble: React.FC = () => {
               boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
             }}
           >
-            <Typography sx={{
-              color: "inherit",
-            }}>
+            <Typography
+              sx={{
+                color: "inherit",
+              }}
+            >
               Source:{" "}
               <MuiLink
                 href="https://sonnguyenhoang.com/"
@@ -126,7 +128,7 @@ const CitationBubble: React.FC = () => {
                   "&:hover": {
                     color: "#1976d2",
                   },
-              }}
+                }}
               >
                 Son (David) Nguyen's Website
               </MuiLink>
@@ -139,16 +141,16 @@ const CitationBubble: React.FC = () => {
 };
 
 const ChatArea: React.FC<ChatAreaProps> = ({
-                                             conversationId,
-                                             onNewConversation,
-                                           }) => {
+  conversationId,
+  onNewConversation,
+}) => {
   const theme = useTheme();
 
   // Clear guestConversationId on a page reload:
   useEffect(() => {
     // Modern approach to detect reload:
     const [navEntry] = performance.getEntriesByType(
-      "navigation"
+      "navigation",
     ) as PerformanceNavigationTiming[];
     if (navEntry && navEntry.type === "reload") {
       localStorage.removeItem("guestConversationId");
@@ -242,7 +244,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
       if (isAuthenticated()) {
         // Authenticated user -> /chat/auth
-        const resp = await sendAuthedChatMessage(userMessage.text, currentConvId!);
+        const resp = await sendAuthedChatMessage(
+          userMessage.text,
+          currentConvId!,
+        );
         answer = resp.answer;
         returnedId = resp.conversationId;
       } else {
@@ -397,7 +402,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               sx={{ fontSize: 80, color: theme.palette.text.secondary, mb: 2 }}
             />
             <Typography variant="h6" align="center" color="textSecondary">
-              Hello! 👋 I'm Lumina - David Nguyen's personal assistant. Send me a message to get started! 🚀
+              Hello! 👋 I'm Lumina - David Nguyen's personal assistant. Send me
+              a message to get started! 🚀
             </Typography>
           </Box>
         ) : (
@@ -430,7 +436,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                     }}
                   >
                     {/* Avatar and name */}
-                    <Box display="flex" flexDirection="column" alignItems="center" mx={1}>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      mx={1}
+                    >
                       <img
                         src={isUser ? USER_AVATAR : BOT_AVATAR}
                         alt="avatar"
@@ -443,12 +454,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                           cursor: "pointer",
                         }}
                         onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.transform =
-                            "scale(1.05)";
+                          (
+                            e.currentTarget as HTMLImageElement
+                          ).style.transform = "scale(1.05)";
                         }}
                         onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.transform =
-                            "scale(1.0)";
+                          (
+                            e.currentTarget as HTMLImageElement
+                          ).style.transform = "scale(1.0)";
                         }}
                       />
                       <Typography
@@ -553,7 +566,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
-              Processing Message<AnimatedEllipsis />
+              Processing Message
+              <AnimatedEllipsis />
             </Typography>
           </Box>
         )}
@@ -561,7 +575,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
-              Generating Response<AnimatedEllipsis />
+              Generating Response
+              <AnimatedEllipsis />
             </Typography>
           </Box>
         )}
