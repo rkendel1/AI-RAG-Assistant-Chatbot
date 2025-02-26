@@ -13,6 +13,9 @@ import { motion } from "framer-motion";
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   const [copied, setCopied] = useState(false);
 
+  /**
+   * Handle the click event on the copy button
+   */
   const handleClick = async () => {
     try {
       await navigator.clipboard.writeText(text);

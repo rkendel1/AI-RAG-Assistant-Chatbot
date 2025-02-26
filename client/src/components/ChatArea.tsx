@@ -357,10 +357,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
+  /**
+   * Handle copying text to clipboard.
+   *
+   * @param text The text to copy.
+   */
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // Optionally show a brief notification (not implemented here)
     } catch (err) {
       console.error("Failed to copy text:", err);
     }
@@ -400,7 +404,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     return <span>{".".repeat(dotCount)}</span>;
   };
 
-  // Link styling for user vs. assistant messages:
+  // Link stylings for user vs. assistant messages:
   const userLinkSx = {
     color: "#fff",
     textDecoration: "underline",
