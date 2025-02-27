@@ -105,8 +105,8 @@ const LandingPage: React.FC = () => {
             </Grow>
             <Fade in={showHero} timeout={1200}>
               <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
-                Chat, save conversations, and get instant information about
-                {" "}<Box
+                Chat, save conversations, and get instant information about{" "}
+                <Box
                   component="a"
                   href="https://sonnguyenhoang.com"
                   sx={{
@@ -114,7 +114,11 @@ const LandingPage: React.FC = () => {
                     textDecoration: "none",
                     display: "inline-block",
                     transition: "transform 0.3s",
-                    "&:hover": { transform: "scale(1.03)", color: "primary.main", textDecoration: "underline" },
+                    "&:hover": {
+                      transform: "scale(1.03)",
+                      color: "primary.main",
+                      textDecoration: "underline",
+                    },
                   }}
                 >
                   David Nguyen
@@ -311,7 +315,11 @@ const LandingPage: React.FC = () => {
               textDecoration: "none",
               display: "inline-block",
               transition: "transform 0.3s",
-              "&:hover": { transform: "scale(1.03)", color: "primary.main", textDecoration: "underline" },
+              "&:hover": {
+                transform: "scale(1.03)",
+                color: "primary.main",
+                textDecoration: "underline",
+              },
             }}
           >
             David Nguyen's
