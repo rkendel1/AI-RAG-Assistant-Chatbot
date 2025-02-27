@@ -64,7 +64,7 @@ const LandingPage: React.FC = () => {
     height: "100%",
     transition: "transform 0.3s, box-shadow 0.6s",
     "&:hover": {
-      transform: "scale(1.03)",
+      transform: "scale(1.05)",
       boxShadow: theme.shadows[6],
     },
     borderRadius: 2,
