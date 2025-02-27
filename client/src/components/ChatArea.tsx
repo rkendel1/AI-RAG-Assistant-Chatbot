@@ -202,7 +202,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
   // Loading states
   const [loadingState, setLoadingState] = useState<
-    "idle" | "processing" | "generating" | "done"
+    "idle" | "processing" | "thinking" | "generating" | "done"
   >("idle");
   const [loadingConversation, setLoadingConversation] = useState(false);
 
@@ -270,7 +270,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       setLoadingState("processing");
 
       // Short delay for UI effect
-      await new Promise((res) => setTimeout(res, 300));
+      await new Promise((res) => setTimeout(res, 500));
+
+      setLoadingState("thinking");
+
+      // Short delay for UI effect
+      await new Promise((res) => setTimeout(res, 1000));
 
       setLoadingState("generating");
 
@@ -463,6 +468,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         {messages.length === 0 &&
         !loadingConversation &&
         loadingState !== "generating" &&
+        loadingState !== "thinking" &&
         loadingState !== "processing" ? (
           <Box
             display="flex"
@@ -873,12 +879,22 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           </AnimatePresence>
         )}
 
-        {/* Show "processing" or "generating" indicator */}
+        {/* Show "processing" or "generating" or "thinking" messages */}
         {loadingState === "processing" && (
           <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
             <CircularProgress size={18} />
             <Typography variant="caption" color="textSecondary">
               Processing Message
+              <AnimatedEllipsis />
+            </Typography>
+          </Box>
+        )}
+
+        {loadingState === "thinking" && (
+          <Box display="flex" alignItems="center" gap="0.5rem" mt="0.5rem">
+            <CircularProgress size={18} />
+            <Typography variant="caption" color="textSecondary">
+              Thinking & Reasoning
               <AnimatedEllipsis />
             </Typography>
           </Box>
