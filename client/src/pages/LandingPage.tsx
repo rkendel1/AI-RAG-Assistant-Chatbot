@@ -106,7 +106,20 @@ const LandingPage: React.FC = () => {
             <Fade in={showHero} timeout={1200}>
               <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
                 Chat, save conversations, and get instant information about
-                David Nguyen's at your fingertips.
+                {" "}<Box
+                  component="a"
+                  href="https://sonnguyenhoang.com"
+                  sx={{
+                    color: "inherit",
+                    textDecoration: "none",
+                    display: "inline-block",
+                    transition: "transform 0.3s",
+                    "&:hover": { transform: "scale(1.03)", color: "primary.main", textDecoration: "underline" },
+                  }}
+                >
+                  David Nguyen
+                </Box>{" "}
+                at your fingertips.
               </Typography>
             </Fade>
           </Box>
@@ -289,8 +302,21 @@ const LandingPage: React.FC = () => {
         }}
       >
         <Typography variant="body1" color="textSecondary">
-          © {new Date().getFullYear()} David Nguyen's AI Assistant. All rights
-          reserved.
+          © {new Date().getFullYear()}{" "}
+          <Box
+            component="a"
+            href="https://sonnguyenhoang.com"
+            sx={{
+              color: "inherit",
+              textDecoration: "none",
+              display: "inline-block",
+              transition: "transform 0.3s",
+              "&:hover": { transform: "scale(1.03)", color: "primary.main", textDecoration: "underline" },
+            }}
+          >
+            David Nguyen's
+          </Box>{" "}
+          AI Assistant. All rights reserved.
         </Typography>
       </Box>
     </Box>
