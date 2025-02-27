@@ -59,12 +59,12 @@ const LandingPage: React.FC = () => {
     borderTopRightRadius: 4,
   };
 
-  // Reusable style for each feature card.
+  // Reusable style for each feature card with hover scaling.
   const cardStyle = {
     height: "100%",
     transition: "transform 0.3s, box-shadow 0.6s",
     "&:hover": {
-      transform: "scale(1.05)",
+      transform: "scale(1.05)", // Scale the card on hover
       boxShadow: theme.shadows[6],
     },
     borderRadius: 2,
@@ -105,8 +105,8 @@ const LandingPage: React.FC = () => {
             </Grow>
             <Fade in={showHero} timeout={1200}>
               <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
-                Chat, save conversations, and get instant responses — all at
-                your fingertips.
+                Chat, save conversations, and get instant information about
+                David Nguyen's at your fingertips.
               </Typography>
             </Fade>
           </Box>
