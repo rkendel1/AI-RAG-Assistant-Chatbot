@@ -71,6 +71,19 @@ const LandingPage: React.FC = () => {
     overflow: "hidden",
   };
 
+  // Reusable style for animated links (hero and footer).
+  const animatedLinkStyle = {
+    color: "inherit",
+    textDecoration: "none",
+    display: "inline-block",
+    transition: "transform 0.3s",
+    "&:hover": {
+      transform: "scale(1.05)",
+      color: "primary.main",
+      textDecoration: "underline",
+    },
+  };
+
   return (
     <Box
       sx={{
@@ -109,17 +122,7 @@ const LandingPage: React.FC = () => {
                 <Box
                   component="a"
                   href="https://sonnguyenhoang.com"
-                  sx={{
-                    color: "inherit",
-                    textDecoration: "none",
-                    display: "inline-block",
-                    transition: "transform 0.3s",
-                    "&:hover": {
-                      transform: "scale(1.03)",
-                      color: "primary.main",
-                      textDecoration: "underline",
-                    },
-                  }}
+                  sx={animatedLinkStyle}
                 >
                   David Nguyen
                 </Box>{" "}
@@ -310,17 +313,7 @@ const LandingPage: React.FC = () => {
           <Box
             component="a"
             href="https://sonnguyenhoang.com"
-            sx={{
-              color: "inherit",
-              textDecoration: "none",
-              display: "inline-block",
-              transition: "transform 0.3s",
-              "&:hover": {
-                transform: "scale(1.03)",
-                color: "primary.main",
-                textDecoration: "underline",
-              },
-            }}
+            sx={animatedLinkStyle}
           >
             David Nguyen's
           </Box>{" "}
