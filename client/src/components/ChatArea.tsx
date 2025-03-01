@@ -238,71 +238,87 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
+  const loadConversationAux = async (id: string) => {
+    try {
+      const conv = await getConversationById(id);
+      setMessages(conv.messages);
+      console.log("Loaded conversation:", conv);
+    } catch (err) {
+      console.error("Error loading conversation:", err);
+    }
+  };
+
   /**
    * Send the user's message to the server and receive a response.
    */
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
+    const startTime = Date.now();
     let currentConvId = conversationId;
 
     try {
-      // If authenticated but no conversationId, create a new one BEFORE setting local messages
+      // Create new conversation if needed for authenticated users.
       if (isAuthenticated() && !currentConvId) {
         const newConv = await createNewConversation();
         currentConvId = newConv._id;
         if (onNewConversation) onNewConversation(newConv);
       }
 
-      // Prepare user message
+      // Prepare and immediately add the user message locally.
       const userMessage: IMessage = {
         sender: "user",
         text: input,
         timestamp: new Date(),
       };
 
-      // Immediately update local state
       setMessages((prev) => [...prev, userMessage]);
       setMessageHistory((prev) => [...prev, input]);
       setHistoryIndex(-1);
       setTempInput("");
       setInput("");
+
+      // Update state: processing immediately.
       setLoadingState("processing");
 
-      // Short delay for UI effect
-      await new Promise((res) => setTimeout(res, 500));
+      // Schedule state transitions:
+      setTimeout(() => {
+        setLoadingState("thinking");
+      }, 300);
 
-      setLoadingState("thinking");
+      setTimeout(() => {
+        setLoadingState("generating");
+      }, 600);
 
-      // Short delay for UI effect
-      await new Promise((res) => setTimeout(res, 1000));
-
-      setLoadingState("generating");
-
-      let guestId = getGuestIdFromLocalStorage();
+      // Start the API call concurrently.
       let answer = "";
       let returnedId = "";
-
       if (isAuthenticated()) {
-        // Authenticated user -> /chat/auth
-        const resp = await sendAuthedChatMessage(
-          userMessage.text,
-          currentConvId!,
-        );
+        const resp = await sendAuthedChatMessage(userMessage.text, currentConvId!);
         answer = resp.answer;
         returnedId = resp.conversationId;
       } else {
-        // Guest user -> /chat/guest
+        const guestId = getGuestIdFromLocalStorage();
         const resp = await sendGuestChatMessage(userMessage.text, guestId);
         answer = resp.answer;
         returnedId = resp.guestId;
-        // If we had no guestId, store the new one
         if (!guestId) {
           setGuestIdInLocalStorage(returnedId);
         }
       }
 
-      // Add the AI's response locally
+      // Calculate elapsed time since start.
+      const elapsed = Date.now() - startTime;
+      const minimumTotalDelay = 900;
+
+      // If API call finished too quickly, wait the remaining time.
+      if (elapsed < minimumTotalDelay) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, minimumTotalDelay - elapsed)
+        );
+      }
+
+      // Add the assistant's response locally.
       const botMessage: IMessage = {
         sender: "assistant",
         text: answer,
@@ -310,14 +326,23 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       };
       setMessages((prev) => [...prev, botMessage]);
 
+      // Finalize state.
       setLoadingState("done");
 
-      // Reload the conversation from the server to ensure we display all messages from the DB
+      // Optionally reload the conversation from the server.
       if (currentConvId) {
-        await loadConversation(currentConvId);
+        await loadConversationAux(currentConvId);
       }
     } catch (err) {
       console.error("Error sending message:", err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "assistant",
+          text: "Sorry, I encountered an error. Please try again.",
+          timestamp: new Date(),
+        },
+      ]);
       setLoadingState("done");
     }
   };
