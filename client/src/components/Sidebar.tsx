@@ -117,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         transition:
           "width 0.3s ease-in-out, left 0.3s ease-in-out, background-color 0.3s ease",
         backgroundColor: theme.palette.background.paper,
-        zIndex: isMobile ? 1200 : "auto", // Overlay on mobile
+        zIndex: isMobile ? 12000 : "auto", // Overlay on mobile
         boxShadow: isMobile && open ? 5 : 0,
       }}
     >
