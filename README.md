@@ -64,8 +64,9 @@ Alternatively, the backup app is deployed live on Netlify at: [https://lumina-ai
 - **AI Chatbot:** Ask questions about David Nguyen and general topics; receive responses from an AI.
 - **User Authentication:** Sign up, log in, and log out using JWT authentication.
 - **Conversation History:** Save, retrieve, rename, and search past conversations (only for authenticated users).
-- **Updated Knowledge Base:** Use RAG (Retrieval-Augmented Generation) & LangChain to enhance AI responses.
-- **Dynamic Responses:** AI-generated responses with markdown formatting for rich text.
+- **Updated & Vast Knowledge Base:** Use RAG (Retrieval-Augmented Generation) & LangChain to enhance AI responses.
+- **Dynamic Responses:** AI-generated responses with `markdown` formatting for rich text.
+- **Interactive Chat:** Real-time chat interface with smooth animations and transitions.
 - **Reset Password:** Verify email and reset a user’s password.
 - **Responsive UI:** Built with React and Material‑UI (MUI) with a fully responsive, modern, and animated interface.
 - **Landing Page:** A dynamic landing page with animations, feature cards, and call-to-action buttons.
