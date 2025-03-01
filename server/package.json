@@ -1,5 +1,5 @@
 {
-  "name": "ai-assistant-backend",
+  "name": "lumina-ai-assistant-backend",
   "version": "1.0.0",
   "main": "dist/server.js",
   "author": "Son Nguyen",

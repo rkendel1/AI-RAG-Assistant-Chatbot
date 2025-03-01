@@ -1,5 +1,5 @@
 {
-  "name": "ai-assistant-chatbot",
+  "name": "lumina-ai-assistant-chatbot",
   "version": "1.0.0",
   "description": "A chatbot for David Nguyen's personal AI assistant.",
   "main": "dist/index.js",
