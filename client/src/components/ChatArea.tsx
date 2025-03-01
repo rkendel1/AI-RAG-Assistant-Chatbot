@@ -294,7 +294,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       let answer = "";
       let returnedId = "";
       if (isAuthenticated()) {
-        const resp = await sendAuthedChatMessage(userMessage.text, currentConvId!);
+        const resp = await sendAuthedChatMessage(
+          userMessage.text,
+          currentConvId!,
+        );
         answer = resp.answer;
         returnedId = resp.conversationId;
       } else {
@@ -314,7 +317,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       // If API call finished too quickly, wait the remaining time.
       if (elapsed < minimumTotalDelay) {
         await new Promise((resolve) =>
-          setTimeout(resolve, minimumTotalDelay - elapsed)
+          setTimeout(resolve, minimumTotalDelay - elapsed),
         );
       }
 
