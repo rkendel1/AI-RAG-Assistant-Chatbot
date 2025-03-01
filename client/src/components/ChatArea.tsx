@@ -451,19 +451,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           }
         }}
       >
-        {loadingConversation && (
-          <Box display="flex" justifyContent="center" mt={2}>
-            <CircularProgress size={24} />
-            <Typography
-              variant="caption"
-              ml={1}
-              sx={{ color: theme.palette.mode === "dark" ? "white" : "black" }}
-            >
-              Loading Conversation...
-            </Typography>
-          </Box>
-        )}
-
         {/* If no messages yet, show placeholder */}
         {messages.length === 0 &&
         !loadingConversation &&
@@ -907,6 +894,36 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               Generating Response
               <AnimatedEllipsis />
             </Typography>
+          </Box>
+        )}
+
+        {loadingConversation && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 1000,
+            }}
+          >
+            <Box display="flex" alignItems="center">
+              <CircularProgress size={24} />
+              <Typography
+                variant="caption"
+                ml={1}
+                sx={{
+                  color: theme.palette.mode === "dark" ? "white" : "black",
+                }}
+              >
+                Loading Conversation...
+              </Typography>
+            </Box>
           </Box>
         )}
       </Box>

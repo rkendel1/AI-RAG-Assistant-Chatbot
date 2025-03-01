@@ -22,6 +22,7 @@ This directory contains the **client** side of the **Lumina** project – a slee
 ## Overview
 
 The Lumina frontend is built with **React** and **TypeScript** and styled using **Material‑UI (MUI)**. It provides a dynamic, modern user interface featuring:
+
 - A responsive design adaptable to all screen sizes
 - Smooth animations and theme toggling (dark/light mode)
 - A collapsible sidebar for easy access to conversation history

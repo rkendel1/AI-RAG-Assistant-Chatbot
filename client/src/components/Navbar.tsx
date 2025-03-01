@@ -234,7 +234,7 @@ const Navbar: React.FC<NavbarProps> = ({
               onChange={handleSearchChange}
             />
             {searchLoading && (
-              <CircularProgress size={20} color="inherit" sx={{ ml: 1 }} />
+              <CircularProgress size={20} sx={{ ml: 1, color: "#1976d2" }} />
             )}
           </Box>
 

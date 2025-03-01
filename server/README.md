@@ -23,6 +23,7 @@ This directory contains the **server** side of the **Lumina** project – a robu
 ## Overview
 
 The Lumina backend is designed to handle:
+
 - **User Authentication:** Secure sign up, login, and password reset functionalities using JWT.
 - **Conversation Management:** Endpoints for creating, retrieving, updating, searching, and deleting conversations.
 - **AI Chat Integration:** Processes chat queries to generate AI responses.
@@ -54,12 +55,14 @@ The Lumina backend is designed to handle:
 ## API Endpoints
 
 ### Authentication
+
 - **POST /api/auth/signup:** Register a new user.
 - **POST /api/auth/login:** Authenticate a user and return a JWT.
 - **GET /api/auth/verify-email?email=example@example.com:** Verify if an email exists.
 - **POST /api/auth/reset-password:** Reset a user’s password.
 
 ### Conversations
+
 - **POST /api/conversations:** Create a new conversation.
 - **GET /api/conversations:** Retrieve all conversations for a user.
 - **GET /api/conversations/:id:** Retrieve a specific conversation by its ID.
@@ -68,6 +71,7 @@ The Lumina backend is designed to handle:
 - **DELETE /api/conversations/:id:** Delete a conversation.
 
 ### Chat
+
 - **POST /api/chat:** Process a chat query and return an AI-generated response.
 
 For additional API details, please refer to the OpenAPI specification file (`openapi.yaml`) located in the project root or visit the `/docs` endpoint on the deployed server.

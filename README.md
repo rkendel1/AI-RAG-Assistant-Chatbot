@@ -13,12 +13,12 @@
 - [Features](#features)
 - [Architecture](#architecture)
 - [Technologies Used](#technologies-used)
-- [User Interface](#user-interface)
 - [Setup & Installation](#setup--installation)
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
 - [Deployment](#deployment)
 - [Usage](#usage)
+- [User Interface](#user-interface)
 - [API Endpoints](#api-endpoints)
   - [Authentication](#authentication)
   - [Conversations](#conversations)
@@ -119,56 +119,6 @@ The project is divided into two main parts:
   - React Router for navigation
   - Axios for API requests
   - React Markdown for rendering AI-generated markdown text
-
-## User Interface
-
-### Landing Page
-
-<p align="center">
-  <img src="img/landing.png" alt="Landing Page" width="100%">
-</p>
-
-### Homepage
-
-<p align="center">
-  <img src="img/home.png" alt="Homepage" width="100%">
-</p>
-
-### Homepage - Dark Mode
-
-<p align="center">
-  <img src="img/home-dark.png" alt="Homepage - Dark Mode" width="100%">
-</p>
-
-### Login Page
-
-<p align="center">
-  <img src="img/login.png" alt="Login Page" width="100%">
-</p>
-
-### Signup Page
-
-<p align="center">
-  <img src="img/register.png" alt="Signup Page" width="100%">
-</p>
-
-### Reset Password Page
-
-<p align="center">
-  <img src="img/reset-password.png" alt="Reset Password Page" width="100%">
-</p>
-
-### Homepage - Unauthenticated User
-
-<p align="center">
-  <img src="img/unauthed-home.png" alt="Homepage - Unauthenticated User" width="100%">
-</p>
-
-### 404 Page
-
-<p align="center">
-  <img src="img/404.png" alt="404 Page" width="100%">
-</p>
 
 ## Setup & Installation
 
@@ -273,6 +223,86 @@ The project is divided into two main parts:
 
 - **Theme:**  
   Toggle between dark and light mode via the navbar. The chosen theme is saved in local storage and persists across sessions.
+
+## User Interface
+
+### Landing Page
+
+<p align="center">
+  <img src="img/landing.png" alt="Landing Page" width="100%">
+</p>
+
+#### Landing Page - Dark Mode
+
+<p align="center">
+  <img src="img/landing-dark.png" alt="Landing Page - Dark Mode" width="100%">
+</p>
+
+### Homepage
+
+<p align="center">
+  <img src="img/home.png" alt="Homepage" width="100%">
+</p>
+
+#### Homepage - Dark Mode
+
+<p align="center">
+  <img src="img/home-dark.png" alt="Homepage - Dark Mode" width="100%">
+</p>
+
+### Login Page
+
+<p align="center">
+  <img src="img/login.png" alt="Login Page" width="100%">
+</p>
+
+#### Login Page - Dark Mode
+
+<p align="center">
+  <img src="img/login-dark.png" alt="Login Page - Dark Mode" width="100%">
+</p>
+
+### Signup Page
+
+<p align="center">
+  <img src="img/register.png" alt="Signup Page" width="100%">
+</p>
+
+#### Signup Page - Dark Mode
+
+<p align="center">
+  <img src="img/register-dark.png" alt="Signup Page - Dark Mode" width="100%">
+</p>
+
+### Reset Password Page
+
+<p align="center">
+  <img src="img/reset-password.png" alt="Reset Password Page" width="100%">
+</p>
+
+#### Reset Password Page - Dark Mode
+
+<p align="center">
+  <img src="img/reset-password-dark.png" alt="Reset Password Page - Dark Mode" width="100%">
+</p>
+
+### Homepage - Unauthenticated User
+
+<p align="center">
+  <img src="img/unauthed-home.png" alt="Homepage - Unauthenticated User" width="100%">
+</p>
+
+#### Homepage - Unauthenticated User - Dark Mode
+
+<p align="center">
+  <img src="img/unauthed-home-dark.png" alt="Homepage - Unauthenticated User - Dark Mode" width="100%">
+</p>
+
+### 404 Page
+
+<p align="center">
+  <img src="img/404.png" alt="404 Page" width="100%">
+</p>
 
 ## API Endpoints
 
