@@ -12,7 +12,7 @@
   - [Key Technologies](#key-technologies)
 - [Features](#features)
 - [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
+  - [High-Level Architecture Flow Diagram](#high-level-architecture-flow-diagram)
 - [Setup & Installation](#setup--installation)
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
@@ -98,6 +98,7 @@ The project is divided into two main parts:
 
 - **AI/ML:**
   Use RAG (Retrieval-Augmented Generation) & LangChain to enhance the AI's responses by retrieving relevant information from a knowledge base or external sources. This involves:
+
   - Retrieval: Implement a retrieval mechanism to fetch relevant documents or data from a knowledge base or external sources.
   - Augmentation: Combine the retrieved information with the user's query to provide a more informed response.
   - Generation: Use a generative model to create a response based on the augmented input.
@@ -105,6 +106,7 @@ The project is divided into two main parts:
   - LangChain: Use LangChain to manage the entire process, from retrieval to generation, ensuring a seamless integration of RAG into the chatbot's workflow.
   - Pinecone: Use Pinecone for vector similarity search to efficiently retrieve relevant documents or data for the RAG model.
 
+### High-Level Architecture Flow Diagram
 ```plaintext
          ┌─────────────────────────────┐
          │      User Interaction       │
@@ -173,25 +175,6 @@ The project is divided into two main parts:
          │ - Update UI (convo history) │
          └─────────────────────────────┘
 ```
-
-## Technologies Used
-
-- **Backend:**
-
-  - Node.js & Express
-  - TypeScript
-  - MongoDB (with Mongoose)
-  - JWT for authentication
-  - Additional packages: bcrypt, cors, dotenv, multer, nodemailer, openai, uuid, etc.
-  - Development tools: nodemon, ts-node
-
-- **Frontend:**
-
-  - React with TypeScript
-  - Material‑UI (MUI) for UI components
-  - React Router for navigation
-  - Axios for API requests
-  - React Markdown for rendering AI-generated markdown text
 
 ## Setup & Installation
 
