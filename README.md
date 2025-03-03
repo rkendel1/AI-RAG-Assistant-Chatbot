@@ -104,7 +104,7 @@ The project is divided into two main parts:
   - LangChain: Use LangChain to manage the entire process, from retrieval to generation, ensuring a seamless integration of RAG into the chatbot's workflow.
   - Pinecone: Use Pinecone for vector similarity search to efficiently retrieve relevant documents or data for the RAG model.
 
-```angular2html
+```plaintext
          ┌─────────────────────────────┐
          │      User Interaction       │
          │ (Chat, Signup, Login, etc.) │
