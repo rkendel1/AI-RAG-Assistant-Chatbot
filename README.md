@@ -106,8 +106,8 @@ The project is divided into two main parts:
 
 ```angular2html
          ┌─────────────────────────────┐
-         │       User Interaction      │
-         │  (Chat, Signup, Login, etc.)│
+         │      User Interaction       │
+         │ (Chat, Signup, Login, etc.) │
          └─────────────┬───────────────┘
                        │
                        ▼
@@ -118,6 +118,8 @@ The project is divided into two main parts:
          │ - API calls to backend      │
          └─────────────┬───────────────┘
                        │
+                       │ (REST API Calls)
+                       │  
                        ▼
          ┌─────────────────────────────┐
          │   Backend (Express + TS)    │
@@ -140,9 +142,9 @@ The project is divided into two main parts:
        │        (Uses stored convo  │
        │         & documents)       │
        ▼                            ▼
-         ┌─────────────────────────────┐
-         │  AI/ML Component (RAG)      │
-         │ - Retrieval (Pinecone &     │
+       ┌───────────────────────────────┐
+       │  AI/ML Component (RAG)      │
+│ - Retrieval (Pinecone &     │
          │   MongoDB conversation data)│
          │ - Augmentation (LangChain)  │
          │ - Generation (OpenAI API)   │
