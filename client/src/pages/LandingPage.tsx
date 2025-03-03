@@ -13,7 +13,7 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -84,6 +84,19 @@ const LandingPage: React.FC = () => {
     },
   };
 
+  const animatedLinkStyle1 = {
+    color: "inherit",
+    textDecoration: "underline",
+    marginTop: "2rem",
+    display: "inline-block",
+    transition: "transform 0.3s",
+    "&:hover": {
+      transform: "scale(1.05)",
+      color: "primary.main",
+      textDecoration: "underline",
+    },
+  };
+
   return (
     <Box
       sx={{
@@ -118,15 +131,8 @@ const LandingPage: React.FC = () => {
             </Grow>
             <Fade in={showHero} timeout={1200}>
               <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
-                Chat, save conversations, and get instant information about{" "}
-                <Box
-                  component="a"
-                  href="https://sonnguyenhoang.com"
-                  sx={animatedLinkStyle}
-                >
-                  David Nguyen
-                </Box>{" "}
-                at your fingertips.
+                Chat, save conversations, and get instant information about Son
+                (David) Nguyen at your fingertips.
               </Typography>
             </Fade>
           </Box>
@@ -294,6 +300,13 @@ const LandingPage: React.FC = () => {
                 Continue as Guest
               </Button>
             </Box>
+
+            {/* Animated link to the terms of service */}
+            <Typography variant="subtitle1" color="textSecondary">
+              <Box component="a" href="/terms" sx={animatedLinkStyle1}>
+                Terms of Service
+              </Box>{" "}
+            </Typography>
           </Box>
         </Fade>
       </Container>
