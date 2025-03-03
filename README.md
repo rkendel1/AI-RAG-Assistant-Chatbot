@@ -104,6 +104,67 @@ The project is divided into two main parts:
   - LangChain: Use LangChain to manage the entire process, from retrieval to generation, ensuring a seamless integration of RAG into the chatbot's workflow.
   - Pinecone: Use Pinecone for vector similarity search to efficiently retrieve relevant documents or data for the RAG model.
 
+```angular2html
+         ┌─────────────────────────────┐
+         │       User Interaction      │
+         │  (Chat, Signup, Login, etc.)│
+         └─────────────┬───────────────┘
+                       │
+                       ▼
+         ┌─────────────────────────────┐
+         │    Frontend (React + MUI)   │
+         │ - Responsive UI, Animations │
+         │ - Theme toggling, Sidebar   │
+         │ - API calls to backend      │
+         └─────────────┬───────────────┘
+                       │
+                       ▼
+         ┌─────────────────────────────┐
+         │   Backend (Express + TS)    │
+         │ - Auth (JWT, Signup/Login)  │
+         │ - Chat & Convo Endpoints    │
+         │ - API orchestration         │
+         └─────────────┬───────────────┘
+                       │
+           ┌───────────┴────────────┬─────────────┐
+           │                        │             │
+           ▼                        ▼             ▼
+┌─────────────────┐       ┌─────────────────┐  ┌─────────────────────────┐
+│   MongoDB       │◄─────►│ Pinecone Vector │  │  (Additional Data:      │
+│ - User Data     │       │    DB           │  │  Analytics, Logs, etc.) │
+│ - Convo History │       │ - Upserted Docs │  └─────────────────────────┘
+└─────────────────┘       │   /Knowledge    │
+       ▲                  │     Base        │
+       │                  └─────────┬───────┘
+       │                            │
+       │        (Uses stored convo  │
+       │         & documents)       │
+       ▼                            ▼
+         ┌─────────────────────────────┐
+         │  AI/ML Component (RAG)      │
+         │ - Retrieval (Pinecone &     │
+         │   MongoDB conversation data)│
+         │ - Augmentation (LangChain)  │
+         │ - Generation (OpenAI API)   │
+         │ - Feedback loop             │
+         └─────────────┬───────────────┘
+                       │
+                       ▼
+         ┌─────────────────────────────┐
+         │   Response Processing       │
+         │ - Compile AI answer         │
+         │ - Update conversation data  │
+         │   (MongoDB via Backend)     │
+         └─────────────┬───────────────┘
+                       │
+                       ▼
+         ┌─────────────────────────────┐
+         │    Frontend Display         │
+         │ - Show chat response        │
+         │ - Update UI (convo history)  │
+         └─────────────────────────────┘
+```
+
 ## Technologies Used
 
 - **Backend:**
