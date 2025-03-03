@@ -133,8 +133,8 @@ The project is divided into two main parts:
            │                        │             │
            ▼                        ▼             ▼
 ┌─────────────────┐       ┌─────────────────┐  ┌─────────────────────────┐
-│   MongoDB       │◄─────►│ Pinecone Vector │  │  (Additional Data:      │
-│ - User Data     │       │    DB           │  │  Analytics, Logs, etc.) │
+│   MongoDB       │       │ Pinecone Vector │  │  (Additional Data:      │
+│ - User Data     │◄─────►│    Database     │  │  Analytics, Logs, etc.) │
 │ - Convo History │       │ - Upserted Docs │  └────────────┬────────────┘
 └─────────────────┘       │   /Knowledge    │               │
        ▲                  │     Base        │               ▼
@@ -164,6 +164,7 @@ The project is divided into two main parts:
          └─────────────┬───────────────┘
                        │
                        │ (Returns API response)
+                       │ (skip AI/ML for login/signup)
                        │
                        ▼
          ┌─────────────────────────────┐
