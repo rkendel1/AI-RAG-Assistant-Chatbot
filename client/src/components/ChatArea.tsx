@@ -993,6 +993,20 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           </IconButton>
         </Box>
       </Box>
+
+      {/* Terms and conditions */}
+      <Typography variant="caption" align="center" mt={0} mb={1} color="textSecondary">
+        By using this AI assistant, you agree to its{" "}
+        <MuiLink
+          href="/terms"
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={assistantLinkSx}
+        >
+          terms and conditions
+        </MuiLink>
+        .
+      </Typography>
     </Box>
   );
 };

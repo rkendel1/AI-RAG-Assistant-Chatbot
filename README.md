@@ -107,6 +107,7 @@ The project is divided into two main parts:
   - Pinecone: Use Pinecone for vector similarity search to efficiently retrieve relevant documents or data for the RAG model.
 
 ### High-Level Architecture Flow Diagram
+
 ```plaintext
          ┌─────────────────────────────┐
          │      User Interaction       │
@@ -122,7 +123,7 @@ The project is divided into two main parts:
          └─────────────┬───────────────┘
                        │
                        │ (REST API Calls)
-                       │  
+                       │
                        ▼
          ┌─────────────────────────────┐
          │   Backend (Express + TS)    │
@@ -140,7 +141,7 @@ The project is divided into two main parts:
 │ - Convo History │       │ - Upserted Docs │  └────────────┬────────────┘
 └─────────────────┘       │   /Knowledge    │               │
        ▲                  │     Base        │               ▼
-       │                  └─────────┬───────┘      ┌─────────────────┐    
+       │                  └─────────┬───────┘      ┌─────────────────┐
        │                            │              │   Analytics &   │
        │    (Uses stored convo      │              │   Monitoring    │
        │       & documents)         │              │   Services      │
