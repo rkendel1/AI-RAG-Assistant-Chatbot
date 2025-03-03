@@ -147,9 +147,9 @@ The project is divided into two main parts:
        │ - Retrieval (Pinecone &       │
        │   MongoDB conversation data)  │
        │ - Augmentation (LangChain)    │
-         │ - Generation (OpenAI API)   │
-         │ - Feedback loop             │
-         └─────────────┬───────────────┘
+       │ - Generation (OpenAI API)     │
+       │ - Feedback loop               │
+       └───────────────┬───────────────┘
                        │
                        ▼
          ┌─────────────────────────────┐
