@@ -145,8 +145,8 @@ The project is divided into two main parts:
        ┌───────────────────────────────┐
        │  AI/ML Component (RAG)        │
        │ - Retrieval (Pinecone &       │
-         │   MongoDB conversation data)│
-         │ - Augmentation (LangChain)  │
+       │   MongoDB conversation data)  │
+       │ - Augmentation (LangChain)    │
          │ - Generation (OpenAI API)   │
          │ - Feedback loop             │
          └─────────────┬───────────────┘
