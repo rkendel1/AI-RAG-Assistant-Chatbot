@@ -961,6 +961,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         display="flex"
         flexDirection="column"
         p="1rem"
+        pb="0.5rem"
         borderTop={`1px solid ${theme.palette.divider}`}
       >
         <Box display="flex">
