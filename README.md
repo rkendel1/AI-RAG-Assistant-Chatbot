@@ -54,6 +54,7 @@ Alternatively, the backup app is deployed live on Netlify at: [https://lumina-ai
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)
 ![RAG](https://img.shields.io/badge/RAG-FFCA28?style=for-the-badge&logo=rag&logoColor=black)
 ![LangChain](https://img.shields.io/badge/LangChain-000000?style=for-the-badge&logo=langchain&logoColor=white)
+![Google AI](https://img.shields.io/badge/GoogleAI-4285F4?style=for-the-badge&logo=google&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Jupyter Notebook](https://img.shields.io/badge/Jupyter-FFCA28?style=for-the-badge&logo=jupyter&logoColor=black)
@@ -155,9 +156,14 @@ The project is divided into two main parts:
          ┌─────────────────────────────┐
          │   Response Processing       │
          │ - Compile AI answer         │
+         | - Uses NLP & ML models      │
+         │ - Generate response with    │
+         │   LLM & Gemini AI           │
          │ - Update conversation data  │
          │   (MongoDB via Backend)     │
          └─────────────┬───────────────┘
+                       │
+                       │ (Returns API response)
                        │
                        ▼
          ┌─────────────────────────────┐
