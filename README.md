@@ -134,17 +134,17 @@ The project is divided into two main parts:
 ┌─────────────────┐       ┌─────────────────┐  ┌─────────────────────────┐
 │   MongoDB       │◄─────►│ Pinecone Vector │  │  (Additional Data:      │
 │ - User Data     │       │    DB           │  │  Analytics, Logs, etc.) │
-│ - Convo History │       │ - Upserted Docs │  └─────────────────────────┘
-└─────────────────┘       │   /Knowledge    │
-       ▲                  │     Base        │
-       │                  └─────────┬───────┘
-       │                            │
-       │        (Uses stored convo  │
-       │         & documents)       │
-       ▼                            ▼
+│ - Convo History │       │ - Upserted Docs │  └────────────┬────────────┘
+└─────────────────┘       │   /Knowledge    │               │
+       ▲                  │     Base        │               ▼
+       │                  └─────────┬───────┘      ┌─────────────────┐    
+       │                            │              │   Analytics &   │
+       │    (Uses stored convo      │              │   Monitoring    │
+       │       & documents)         │              │   Services      │
+       ▼                            ▼              └─────────────────┘
        ┌───────────────────────────────┐
-       │  AI/ML Component (RAG)      │
-│ - Retrieval (Pinecone &     │
+       │  AI/ML Component (RAG)        │
+       │ - Retrieval (Pinecone &       │
          │   MongoDB conversation data)│
          │ - Augmentation (LangChain)  │
          │ - Generation (OpenAI API)   │
