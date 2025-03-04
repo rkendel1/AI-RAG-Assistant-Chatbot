@@ -395,8 +395,14 @@ The project is divided into two main parts:
 ```
 AI-Assistant-Chatbot/
 ├── docker-compose.yml
+├── openapi.yaml
+├── README.md
+├── LICENSE
+├── Jenkinsfile
 ├── package.json
 ├── tsconfig.json
+├── .env
+├── shell/                          # Shell scripts for app setups
 ├── client/                         # Frontend React application
 │   ├── package.json
 │   ├── tsconfig.json
