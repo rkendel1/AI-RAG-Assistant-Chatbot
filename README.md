@@ -174,6 +174,7 @@ The project is divided into two main parts:
          │    Frontend Display         │
          │ - Show chat response        │
          │ - Update UI (convo history) │
+         │ - Sign user in/out, etc.    │
          └─────────────────────────────┘
 ```
 
