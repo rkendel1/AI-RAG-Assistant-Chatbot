@@ -235,7 +235,7 @@ The project is divided into two main parts:
    npm start
    ```
 
-   The app will run on [http://localhost:3000](http://localhost:3000).
+   The app will run on [http://localhost:3000](http://localhost:3000) (or any other port you've specified in the `.env` file's `PORT` key).
 
 ### AI/ML Setup
 
