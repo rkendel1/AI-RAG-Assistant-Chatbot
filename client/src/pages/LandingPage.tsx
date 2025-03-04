@@ -223,7 +223,8 @@ const LandingPage: React.FC = () => {
                         Secure & Reliable
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        Enjoy a safe environment with encrypted conversations and privacy.
+                        Enjoy a safe environment with encrypted conversations
+                        and privacy.
                       </Typography>
                     </CardContent>
                   </Card>
@@ -246,8 +247,13 @@ const LandingPage: React.FC = () => {
             >
               Get Started Now
             </Typography>
-            <Typography variant="subtitle1" color="textSecondary" sx={{ mb: 4 }}>
-              Create an account to save your conversations or continue as a guest.
+            <Typography
+              variant="subtitle1"
+              color="textSecondary"
+              sx={{ mb: 4 }}
+            >
+              Create an account to save your conversations or continue as a
+              guest.
             </Typography>
             <Box
               sx={{
@@ -311,7 +317,11 @@ const LandingPage: React.FC = () => {
       >
         <Typography variant="body1" color="textSecondary">
           © {new Date().getFullYear()}{" "}
-          <Box component="a" href="https://sonnguyenhoang.com" sx={animatedLinkStyle}>
+          <Box
+            component="a"
+            href="https://sonnguyenhoang.com"
+            sx={animatedLinkStyle}
+          >
             David Nguyen's
           </Box>{" "}
           AI Assistant. All rights reserved.
