@@ -13,30 +13,30 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SecurityIcon from "@mui/icons-material/Security";
 
 /**
- * The LandingPage component
+ * LandingPage Component
  *
- * @constructor The LandingPage component
+ * This page welcomes users to David Nguyen's AI Assistant - Lumina
+ * and displays key features with staggered animations similar to the TermsPage.
  */
 const LandingPage: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // States to trigger staggered animations.
-  const [showHero, setShowHero] = useState(false);
-  const [showFeatures, setShowFeatures] = useState(false);
+  // States for staggered animations (mimicking TermsPage)
+  const [showHeader, setShowHeader] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const [showCTA, setShowCTA] = useState(false);
 
   useEffect(() => {
-    // Stagger animations on mount.
-    const timer1 = setTimeout(() => setShowHero(true), 300);
-    const timer2 = setTimeout(() => setShowFeatures(true), 800);
+    const timer1 = setTimeout(() => setShowHeader(true), 300);
+    const timer2 = setTimeout(() => setShowContent(true), 800);
     const timer3 = setTimeout(() => setShowCTA(true), 1300);
     return () => {
       clearTimeout(timer1);
@@ -45,7 +45,7 @@ const LandingPage: React.FC = () => {
     };
   }, []);
 
-  // Reusable style for icon container inside feature cards.
+  // Reusable style for the icon container inside feature cards.
   const iconContainerStyle = {
     height: 140,
     display: "flex",
@@ -64,14 +64,14 @@ const LandingPage: React.FC = () => {
     height: "100%",
     transition: "transform 0.3s, box-shadow 0.6s",
     "&:hover": {
-      transform: "scale(1.05)", // Scale the card on hover
+      transform: "scale(1.05)",
       boxShadow: theme.shadows[6],
     },
     borderRadius: 2,
     overflow: "hidden",
   };
 
-  // Reusable style for animated links (hero and footer).
+  // Reusable styles for animated links.
   const animatedLinkStyle = {
     color: "inherit",
     textDecoration: "none",
@@ -111,35 +111,31 @@ const LandingPage: React.FC = () => {
       }}
     >
       <Container maxWidth="lg" sx={{ pt: 6, pb: 6 }}>
-        {/* Hero Section */}
-        <Fade in={showHero} timeout={800}>
+        {/* Header Section */}
+        <Fade in={showHeader} timeout={800}>
           <Box sx={{ textAlign: "center", py: 4 }}>
-            <Grow in={showHero} timeout={800}>
-              <Typography
-                variant={isMobile ? "h3" : "h2"}
-                component="h1"
-                gutterBottom
-                sx={{
-                  fontWeight: "bold",
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
-                  color: theme.palette.mode === "dark" ? "white" : "black",
-                  transition: "color 0.3s",
-                }}
-              >
-                Welcome to David Nguyen's AI Assistant - Lumina!
-              </Typography>
-            </Grow>
-            <Fade in={showHero} timeout={1200}>
-              <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
-                Chat, save conversations, and get instant information about Son
-                (David) Nguyen at your fingertips.
-              </Typography>
-            </Fade>
+            <Typography
+              variant={isMobile ? "h3" : "h2"}
+              component="h1"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                color: theme.palette.mode === "dark" ? "white" : "black",
+                transition: "color 0.3s",
+              }}
+            >
+              Welcome to David Nguyen's AI Assistant - Lumina!
+            </Typography>
+            <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
+              Chat, save conversations, and get instant information about Son
+              (David) Nguyen at your fingertips.
+            </Typography>
           </Box>
         </Fade>
 
         {/* Features Section */}
-        <Slide direction="up" in={showFeatures} timeout={800}>
+        <Slide direction="up" in={showContent} timeout={800}>
           <Box sx={{ mt: 6 }}>
             <Typography
               variant="h4"
@@ -164,7 +160,7 @@ const LandingPage: React.FC = () => {
             <Grid container spacing={4}>
               {/* Save Conversations Card */}
               <Grid item xs={12} sm={6} md={4}>
-                <Grow in={showFeatures} timeout={900}>
+                <Grow in={showContent} timeout={900}>
                   <Card elevation={3} sx={cardStyle}>
                     <Box sx={iconContainerStyle}>
                       <ChatBubbleOutlineIcon
@@ -188,7 +184,7 @@ const LandingPage: React.FC = () => {
 
               {/* Instant Responses Card */}
               <Grid item xs={12} sm={6} md={4}>
-                <Grow in={showFeatures} timeout={1000}>
+                <Grow in={showContent} timeout={1000}>
                   <Card elevation={3} sx={cardStyle}>
                     <Box sx={iconContainerStyle}>
                       <FlashOnIcon
@@ -212,7 +208,7 @@ const LandingPage: React.FC = () => {
 
               {/* Secure & Reliable Card */}
               <Grid item xs={12} sm={6} md={4}>
-                <Grow in={showFeatures} timeout={1100}>
+                <Grow in={showContent} timeout={1100}>
                   <Card elevation={3} sx={cardStyle}>
                     <Box sx={iconContainerStyle}>
                       <SecurityIcon
@@ -227,8 +223,7 @@ const LandingPage: React.FC = () => {
                         Secure & Reliable
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        Enjoy a safe environment with encrypted conversations
-                        and privacy.
+                        Enjoy a safe environment with encrypted conversations and privacy.
                       </Typography>
                     </CardContent>
                   </Card>
@@ -251,13 +246,8 @@ const LandingPage: React.FC = () => {
             >
               Get Started Now
             </Typography>
-            <Typography
-              variant="subtitle1"
-              color="textSecondary"
-              sx={{ mb: 4 }}
-            >
-              Create an account to save your conversations or continue as a
-              guest.
+            <Typography variant="subtitle1" color="textSecondary" sx={{ mb: 4 }}>
+              Create an account to save your conversations or continue as a guest.
             </Typography>
             <Box
               sx={{
@@ -300,12 +290,10 @@ const LandingPage: React.FC = () => {
                 Continue as Guest
               </Button>
             </Box>
-
-            {/* Animated link to the terms of service */}
             <Typography variant="subtitle1" color="textSecondary">
               <Box component="a" href="/terms" sx={animatedLinkStyle1}>
                 Terms of Service
-              </Box>{" "}
+              </Box>
             </Typography>
           </Box>
         </Fade>
@@ -323,11 +311,7 @@ const LandingPage: React.FC = () => {
       >
         <Typography variant="body1" color="textSecondary">
           © {new Date().getFullYear()}{" "}
-          <Box
-            component="a"
-            href="https://sonnguyenhoang.com"
-            sx={animatedLinkStyle}
-          >
+          <Box component="a" href="https://sonnguyenhoang.com" sx={animatedLinkStyle}>
             David Nguyen's
           </Box>{" "}
           AI Assistant. All rights reserved.
