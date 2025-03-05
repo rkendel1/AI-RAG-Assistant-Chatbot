@@ -4,12 +4,22 @@ info:
   version: "1.1.0"
   description: "API documentation for the AI Assistant application."
 servers:
+  - url: "https://ai-assistant-chatbot-server.vercel.app"
+    description: "Production server"
   - url: "http://localhost:3000"
     description: "Local server"
-
+tags:
+  - name: "Auth"
+    description: "Endpoints for user authentication and account management"
+  - name: "Chat"
+    description: "Endpoints for chat interactions with the AI assistant"
+  - name: "Conversations"
+    description: "Endpoints for managing user conversations"
 paths:
   /api/auth/signup:
     post:
+      tags:
+        - "Auth"
       summary: "Sign Up a new user"
       description: "Create a new user account with the provided email and password."
       requestBody:
@@ -40,8 +50,8 @@ paths:
                 properties:
                   message:
                     type: string
-                example:
-                  message: "User created successfully"
+              example:
+                message: "User created successfully"
         '400':
           description: "User already exists."
         '500':
@@ -49,6 +59,8 @@ paths:
 
   /api/auth/login:
     post:
+      tags:
+        - "Auth"
       summary: "Log in a user"
       description: "Authenticate a user with email and password and return a JWT token."
       requestBody:
@@ -79,8 +91,8 @@ paths:
                 properties:
                   token:
                     type: string
-                example:
-                  token: "your.jwt.token"
+              example:
+                token: "your.jwt.token"
         '400':
           description: "Invalid credentials or user does not exist."
         '500':
@@ -88,6 +100,8 @@ paths:
 
   /api/auth/verify-email:
     get:
+      tags:
+        - "Auth"
       summary: "Verify if an email exists"
       description: "Checks whether a user with the specified email exists."
       parameters:
@@ -108,8 +122,8 @@ paths:
                 properties:
                   exists:
                     type: boolean
-                example:
-                  exists: true
+              example:
+                exists: true
         '400':
           description: "Email is required."
         '500':
@@ -117,6 +131,8 @@ paths:
 
   /api/auth/reset-password:
     post:
+      tags:
+        - "Auth"
       summary: "Reset user password"
       description: "Resets the password for a user identified by the email."
       requestBody:
@@ -147,19 +163,26 @@ paths:
                 properties:
                   message:
                     type: string
-                example:
-                  message: "Password reset successfully"
+              example:
+                message: "Password reset successfully"
         '400':
           description: "Email and new password are required, or user does not exist."
         '500':
           description: "Server error."
 
-  /api/chat:
+  /api/chat/auth:
     post:
-      summary: "Chat with the AI assistant"
-      description: >
-        Sends a chat message to the AI assistant. For authenticated users, the conversation is stored 
-        and retrieved from MongoDB; for unauthenticated users, an ephemeral in-memory conversation is used.
+      tags:
+        - "Chat"
+      summary: "Chat with the AI assistant as an authenticated user"
+      description: "Sends a chat message to the AI assistant. Requires a valid JWT in the Authorization header. The conversation is stored in MongoDB's Conversation collection."
+      parameters:
+        - name: Authorization
+          in: header
+          description: "JWT token in the format 'Bearer {token}'"
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -178,7 +201,7 @@ paths:
               conversationId: "60d5ec49f5a3c80015c0d9a4"
       responses:
         '200':
-          description: "AI response returned successfully."
+          description: "AI response for authenticated user."
           content:
             application/json:
               schema:
@@ -188,16 +211,65 @@ paths:
                     type: string
                   conversationId:
                     type: string
-                example:
-                  answer: "Hi there! How can I help you today?"
-                  conversationId: "60d5ec49f5a3c80015c0d9a4"
+              example:
+                answer: "Hi there! How can I help you today?"
+                conversationId: "60d5ec49f5a3c80015c0d9a4"
         '400':
-          description: "Bad Request - Invalid or missing parameters."
+          description: "Bad Request"
+        '401':
+          description: "Unauthorized (invalid or missing token)"
+        '404':
+          description: "Conversation not found"
+        '500':
+          description: "Server error."
+
+  /api/chat/guest:
+    post:
+      tags:
+        - "Chat"
+      summary: "Chat with the AI assistant as a guest (unauthenticated)"
+      description: "Sends a chat message to the AI assistant. No token required. The conversation is stored in MongoDB's GuestConversation collection, keyed by a guestId."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                guestId:
+                  type: string
+              required:
+                - message
+                - guestId
+            example:
+              message: "Hello from a guest user"
+              guestId: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '200':
+          description: "AI response for guest user."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                  guestId:
+                    type: string
+              example:
+                answer: "Hi there! How can I help you today?"
+                guestId: "123e4567-e89b-12d3-a456-426614174000"
+        '400':
+          description: "Bad Request"
         '500':
           description: "Server error."
 
   /api/conversations:
     post:
+      tags:
+        - "Conversations"
       summary: "Create a new conversation"
       description: "Creates a new conversation for the authenticated user with a default title of 'New Conversation'."
       responses:
@@ -216,6 +288,8 @@ paths:
         '500':
           description: "Internal server error."
     get:
+      tags:
+        - "Conversations"
       summary: "Get all conversations for the authenticated user"
       responses:
         '200':
@@ -237,6 +311,8 @@ paths:
 
   /api/conversations/{id}:
     get:
+      tags:
+        - "Conversations"
       summary: "Get a conversation by ID"
       parameters:
         - name: id
@@ -263,6 +339,8 @@ paths:
         '500':
           description: "Internal server error."
     put:
+      tags:
+        - "Conversations"
       summary: "Rename (update) a conversation's title"
       parameters:
         - name: id
@@ -302,6 +380,8 @@ paths:
         '500':
           description: "Internal server error."
     delete:
+      tags:
+        - "Conversations"
       summary: "Delete a conversation"
       parameters:
         - name: id
@@ -320,8 +400,8 @@ paths:
                 properties:
                   message:
                     type: string
-                example:
-                  message: "Conversation deleted successfully"
+              example:
+                message: "Conversation deleted successfully"
         '404':
           description: "Conversation not found."
         '500':
@@ -329,6 +409,8 @@ paths:
 
   /api/conversations/search/{query}:
     get:
+      tags:
+        - "Conversations"
       summary: "Search conversations by title or message content"
       parameters:
         - name: query
@@ -399,5 +481,3 @@ components:
         - sender
         - content
         - timestamp
-
-
