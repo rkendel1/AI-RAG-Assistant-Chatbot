@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 /**
  * @swagger
@@ -227,6 +228,55 @@ router.post("/reset-password", async (req: Request, res: Response) => {
     res.json({ message: "Password reset successfully" });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/auth/validate-token:
+ *   get:
+ *     summary: Validate the user's token.
+ *     description: Checks if the token is still valid.
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: Token is valid.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 valid:
+ *                   type: boolean
+ *                   example: true
+ *       401:
+ *         description: Token is invalid or expired.
+ *       500:
+ *         description: Server error.
+ */
+router.get("/validate-token", (req: Request, res: Response) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res
+        .status(401)
+        .json({ valid: false, message: "No token provided" });
+    }
+
+    // @ts-ignore
+    jwt.verify(token, JWT_SECRET, (err) => {
+      if (err) {
+        return res
+          .status(401)
+          .json({ valid: false, message: "Invalid or expired token" });
+      }
+      return res.json({ valid: true });
+    });
+  } catch (error) {
+    console.error("Error validating token:", error);
+    res.status(500).json({ valid: false, message: "Internal server error" });
   }
 });
 

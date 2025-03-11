@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   AppBar,
@@ -25,6 +25,7 @@ import {
   createNewConversation,
   searchConversations,
   isAuthenticated,
+  validateToken,
 } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { IConversation } from "../types/conversation";
@@ -66,16 +67,39 @@ const Navbar: React.FC<NavbarProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [newConvLoading, setNewConvLoading] = useState(false);
-
-  // For the "human" icon menu (Login/Register)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const text = "Lumina AI";
   const colors = ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#9D4EDD"];
   const debounceTimerRef = useRef<number | null>(null);
+
+  // State to track token validity
+  const [isTokenValid, setIsTokenValid] = useState(isAuthenticated());
+  // Ref to ensure the app reloads only once
+  const hasReloadedRef = useRef(false);
+
+  // Validate the token every 500ms and reload only once if invalid
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsTokenValid(false);
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      const valid = await validateToken();
+      if (!valid && !hasReloadedRef.current) {
+        hasReloadedRef.current = true;
+        console.warn("Token invalid, reloading app...");
+        window.location.reload();
+      }
+      setIsTokenValid(valid);
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   /**
    * Opens the menu anchor
@@ -155,7 +179,10 @@ const Navbar: React.FC<NavbarProps> = ({
       } else {
         console.error(error);
       }
-      window.location.reload();
+      if (!hasReloadedRef.current) {
+        hasReloadedRef.current = true;
+        window.location.reload();
+      }
     } finally {
       setNewConvLoading(false);
     }
@@ -253,10 +280,9 @@ const Navbar: React.FC<NavbarProps> = ({
             )}
           </IconButton>
 
-          {/* Login/Signup (if not authenticated) OR Logout */}
-          {!isAuthenticated() ? (
+          {/* Login/Signup (if token is invalid) OR Logout */}
+          {!isTokenValid ? (
             <>
-              {/* Single 'human' icon */}
               <IconButton
                 sx={{ ml: 1 }}
                 color="inherit"

@@ -234,3 +234,49 @@ export const sendGuestChatMessage = async (
   const resp = await API.post("/chat/guest", payload);
   return resp.data; // { answer, guestId }
 };
+
+/**
+ * Validates the user's authentication token with retries.
+ * Calls the backend `/api/auth/validate-token` to check if the token is still valid.
+ *
+ * @param retries - Number of retry attempts (default: 3).
+ * @returns `true` if the token is valid, `false` otherwise.
+ */
+export const validateToken = async (retries: number = 3): Promise<boolean> => {
+  const token = getTokenFromLocalStorage();
+
+  if (!token) return false; // Immediately exit if no token
+
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await API.get("/auth/validate-token", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 200 && res.data.valid) {
+        return true; // Token is valid, no need to retry
+      }
+
+      console.warn(
+        `Token validation failed (Attempt ${attempt}/${retries}):`,
+        res.data,
+      );
+    } catch (error: any) {
+      console.error(
+        `Error validating token (Attempt ${attempt}/${retries}):`,
+        error.message,
+      );
+    }
+
+    // Wait before retrying (only if not last attempt)
+    if (attempt < retries) await delay(200 * attempt);
+  }
+
+  // If all retries failed, remove the token
+  console.warn("All token validation attempts failed. Removing token.");
+  localStorage.removeItem("token");
+  return false;
+};
