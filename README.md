@@ -485,6 +485,15 @@ To view the API documentation, you can use tools like Swagger UI or Postman to i
 
 This project is licensed under the [MIT License](LICENSE).
 
+## Contact
+
+If you have any questions or suggestions, feel free to reach out to me:
+
+- **David Nguyen**  
+  - [LinkedIn](https://www.linkedin.com/in/hoangsonw/)
+  - [GitHub](https://github.com/hoangsonww)
+  - [Email](mailto:hoangson091104@gmail.com)
+
 ---
 
 Thank you for checking out the AI Assistant Project! If you have any questions or feedback, feel free to reach out. Happy coding! 🚗
