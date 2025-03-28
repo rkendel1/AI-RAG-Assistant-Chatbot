@@ -412,6 +412,16 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   }, [messages, isAtBottom]);
 
+  // Create a ref for the dummy element at the end of your messages list:
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to the dummy element whenever messages update:
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   /**
    * Handle starting a new conversation for a guest user.
    */
@@ -941,6 +951,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                 </Box>
               );
             })}
+            <Box ref={chatEndRef} />
           </AnimatePresence>
         )}
 
