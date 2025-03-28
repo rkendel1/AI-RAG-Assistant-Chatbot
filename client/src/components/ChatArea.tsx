@@ -254,6 +254,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
    */
   const handleSendMessage = async () => {
     if (!input.trim()) return;
+    if (loadingState !== "idle" && loadingState !== "done") return;
 
     const startTime = Date.now();
     let currentConvId = conversationId;
@@ -794,65 +795,49 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                             />
                           ),
                           // @ts-ignore
-                          code: ({
-                            node,
-                            // @ts-ignore
-                            inline,
-                            className,
-                            children,
-                            ...props
-                          }) => {
-                            const match = /language-(\w+)/.exec(
-                              className || "",
-                            );
-                            if (!inline && match) {
+                          code: ({ inline, children, ...props }) => {
+                            if (inline) {
                               return (
-                                <pre
-                                  style={{
+                                // @ts-ignore
+                                <Box
+                                  component="code"
+                                  sx={{
                                     background: "#f5f5f5",
-                                    padding: "1rem",
-                                    borderRadius: "4px",
-                                    overflowX: "auto",
-                                    margin: "1rem 0",
                                     color: "#333",
-                                  }}
-                                >
-                                  <code
-                                    className={className}
-                                    {...(props as any)}
-                                  >
-                                    {children}
-                                  </code>
-                                </pre>
-                              );
-                            } else {
-                              return (
-                                <code
-                                  style={{
-                                    background: "#f5f5f5",
                                     padding: "0.2rem 0.4rem",
                                     borderRadius: "4px",
-                                    color: "#333",
+                                    fontFamily: "monospace",
+                                    whiteSpace: "nowrap",
+                                    overflowX: "auto",
                                   }}
-                                  className={className}
-                                  {...(props as any)}
+                                  {...props}
                                 >
                                   {children}
-                                </code>
+                                </Box>
                               );
                             }
+                            // For block code, let the <pre> renderer take care of it.
+                            return <code {...props}>{children}</code>;
                           },
+
+                          // Override pre for block code blocks
                           pre: ({ node, children, ...props }) => (
+                            // @ts-ignore
                             <Box
                               component="pre"
                               sx={{
                                 background: "#f5f5f5",
+                                color: "#333",
                                 padding: "1rem",
                                 borderRadius: "4px",
                                 overflowX: "auto",
                                 margin: "1rem 0",
+                                maxWidth: "100%",
+                                width: "100%",
+                                boxSizing: "border-box",
+                                whiteSpace: "pre-wrap", // wrap long lines if you prefer; use "pre" to preserve spacing without wrapping
                               }}
-                              {...(props as any)}
+                              {...props}
                             >
                               {children}
                             </Box>
