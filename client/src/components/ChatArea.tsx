@@ -23,6 +23,7 @@ import {
 } from "../services/api";
 import { IMessage, IConversation } from "../types/conversation";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { motion, AnimatePresence } from "framer-motion";
 import CopyIcon from "./CopyIcon";
 
@@ -585,7 +586,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                       sx={{
                         transition: "background-color 0.3s",
                         wordBreak: "break-word",
-                        overflow: "visible",
+                        maxWidth: "100%",
+                        overflow: "auto",
                         "&:hover": {
                           backgroundColor: isUser
                             ? theme.palette.primary.dark
@@ -618,6 +620,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                         </Box>
                       )}
                       <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
                         components={{
                           h1: ({ node, children, ...props }) => (
                             <Box
@@ -768,16 +771,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                               {...props}
                             />
                           ),
-                          code: ({
-                            node,
-                            inline,
-                            className,
-                            children,
-                            ...props
-                          }) => {
-                            const match = /language-(\w+)/.exec(
-                              className || "",
-                            );
+                          code: ({ node, inline, className, children, ...props }) => {
+                            const match = /language-(\w+)/.exec(className || "");
                             if (!inline && match) {
                               return (
                                 <pre
@@ -828,18 +823,17 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                             </Box>
                           ),
                           table: ({ node, children, ...props }) => (
-                            <Box
-                              component="table"
-                              sx={{
-                                width: "100%",
-                                borderCollapse: "collapse",
-                                marginBottom: "1rem",
-                                overflowX: "auto",
-                                display: "block",
-                              }}
-                              {...props}
-                            >
-                              {children}
+                            <Box sx={{ overflowX: "auto", width: "100%", marginBottom: "1rem" }}>
+                              <Box
+                                component="table"
+                                sx={{
+                                  width: "100%",
+                                  borderCollapse: "collapse",
+                                }}
+                                {...props}
+                              >
+                                {children}
+                              </Box>
                             </Box>
                           ),
                           thead: ({ node, children, ...props }) => (
@@ -859,6 +853,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 border: "1px solid #ddd",
                                 padding: "0.5rem",
                                 backgroundColor: "#f5f5f5",
+                                textAlign: "left",
                               }}
                               {...props}
                             >
