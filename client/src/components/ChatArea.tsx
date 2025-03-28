@@ -712,8 +712,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 marginBottom: "0.75rem",
                                 lineHeight: 1.5,
                                 font: "inherit",
-                                color:
-                                  theme.palette.mode === "dark"
+                                color: isUser
+                                  ? "white"
+                                  : theme.palette.mode === "dark"
                                     ? "white"
                                     : "black",
                               }}
@@ -760,7 +761,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 color: "#f57c00",
                                 textDecoration: "underline",
                                 "&:hover": {
-                                  color: "#1976d2",
+                                  color: isUser ? "white" : "#188bfb",
                                   cursor: "pointer",
                                 },
                               }}
