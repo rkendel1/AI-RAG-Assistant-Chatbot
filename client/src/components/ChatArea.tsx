@@ -795,6 +795,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                           // @ts-ignore
                           code: ({
                             node,
+                            // @ts-ignore
                             inline,
                             className,
                             children,
