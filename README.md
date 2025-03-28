@@ -489,7 +489,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 If you have any questions or suggestions, feel free to reach out to me:
 
-- **David Nguyen**  
+- **David Nguyen**
   - [LinkedIn](https://www.linkedin.com/in/hoangsonw/)
   - [GitHub](https://github.com/hoangsonww)
   - [Email](mailto:hoangson091104@gmail.com)

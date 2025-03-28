@@ -586,7 +586,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                       sx={{
                         transition: "background-color 0.3s",
                         wordBreak: "break-word",
-                        maxWidth: "100%",
+                        maxWidth: "75%",
                         overflow: "auto",
                         "&:hover": {
                           backgroundColor: isUser
@@ -632,7 +632,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 borderBottom: "2px solid #eee",
                                 paddingBottom: "0.5rem",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -647,7 +647,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 borderBottom: "1px solid #eee",
                                 paddingBottom: "0.5rem",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -660,7 +660,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 margin: "1rem 0",
                                 fontWeight: "bold",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -673,7 +673,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 margin: "1rem 0",
                                 fontWeight: "bold",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -686,7 +686,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 margin: "1rem 0",
                                 fontWeight: "bold",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -699,7 +699,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 margin: "1rem 0",
                                 fontWeight: "bold",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -711,32 +711,53 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 margin: 0,
                                 marginBottom: "0.75rem",
                                 lineHeight: 1.5,
+                                font: "inherit",
+                                color:
+                                  theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
                           ),
-                          li: ({ node, children, ...props }) => (
-                            <Box
-                              component="li"
-                              sx={{
-                                margin: "0.25rem 0",
-                                lineHeight: 1.4,
-                                "& p": { margin: 0 },
+                          ul: ({ node, children, ...props }) => (
+                            <ul
+                              style={{
+                                color:
+                                  theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black",
+                                font: "inherit",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
-                            </Box>
+                            </ul>
                           ),
-                          a: ({ ...props }) => (
+                          ol: ({ node, children, ...props }) => (
+                            <ol
+                              style={{
+                                color:
+                                  theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black",
+                                font: "inherit",
+                              }}
+                              {...(props as any)}
+                            >
+                              {children}
+                            </ol>
+                          ),
+                          a: ({ node, ...props }) => (
+                            // @ts-ignore
                             <MuiLink
                               {...props}
                               target="_blank"
                               rel="noopener noreferrer"
                               sx={{
-                                color: "inherit",
+                                color: "#f57c00",
                                 textDecoration: "underline",
                                 "&:hover": {
                                   color: "#1976d2",
@@ -755,7 +776,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 fontStyle: "italic",
                                 color: "#555",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -768,11 +789,20 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 borderTop: "1px solid #eee",
                                 margin: "1rem 0",
                               }}
-                              {...props}
+                              {...(props as any)}
                             />
                           ),
-                          code: ({ node, inline, className, children, ...props }) => {
-                            const match = /language-(\w+)/.exec(className || "");
+                          // @ts-ignore
+                          code: ({
+                            node,
+                            inline,
+                            className,
+                            children,
+                            ...props
+                          }) => {
+                            const match = /language-(\w+)/.exec(
+                              className || "",
+                            );
                             if (!inline && match) {
                               return (
                                 <pre
@@ -785,7 +815,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                     color: "#333",
                                   }}
                                 >
-                                  <code className={className} {...props}>
+                                  <code
+                                    className={className}
+                                    {...(props as any)}
+                                  >
                                     {children}
                                   </code>
                                 </pre>
@@ -800,7 +833,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                     color: "#333",
                                   }}
                                   className={className}
-                                  {...props}
+                                  {...(props as any)}
                                 >
                                   {children}
                                 </code>
@@ -817,45 +850,71 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                                 overflowX: "auto",
                                 margin: "1rem 0",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
                           ),
                           table: ({ node, children, ...props }) => (
-                            <Box sx={{ overflowX: "auto", width: "100%", marginBottom: "1rem" }}>
+                            <Box
+                              sx={{
+                                overflowX: "auto",
+                                mb: "1rem",
+                              }}
+                              {...(props as any)}
+                            >
                               <Box
                                 component="table"
                                 sx={{
-                                  width: "100%",
+                                  width: "auto",
+                                  minWidth: "100%",
                                   borderCollapse: "collapse",
+                                  border:
+                                    "1px solid " +
+                                    (theme.palette.mode === "dark"
+                                      ? "white"
+                                      : "black"),
                                 }}
-                                {...props}
                               >
                                 {children}
                               </Box>
                             </Box>
                           ),
                           thead: ({ node, children, ...props }) => (
-                            <Box component="thead" {...props}>
+                            <Box component="thead" {...(props as any)}>
                               {children}
                             </Box>
                           ),
                           tbody: ({ node, children, ...props }) => (
-                            <Box component="tbody" {...props}>
+                            <Box component="tbody" {...(props as any)}>
                               {children}
                             </Box>
+                          ),
+                          tr: ({ node, children, ...props }) => (
+                            <tr {...(props as any)}>{children}</tr>
                           ),
                           th: ({ node, children, ...props }) => (
                             <Box
                               component="th"
                               sx={{
-                                border: "1px solid #ddd",
+                                border:
+                                  "1px solid " +
+                                  (theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black"),
                                 padding: "0.5rem",
-                                backgroundColor: "#f5f5f5",
+                                backgroundColor:
+                                  theme.palette.mode === "dark"
+                                    ? "#333"
+                                    : "#f5f5f5",
                                 textAlign: "left",
+                                fontWeight: "bold",
+                                color:
+                                  theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
@@ -864,10 +923,19 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                             <Box
                               component="td"
                               sx={{
-                                border: "1px solid #ddd",
+                                border:
+                                  "1px solid " +
+                                  (theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black"),
                                 padding: "0.5rem",
+                                textAlign: "left",
+                                color:
+                                  theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black",
                               }}
-                              {...props}
+                              {...(props as any)}
                             >
                               {children}
                             </Box>
