@@ -9,6 +9,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import TermsPage from "./pages/Terms";
 import { ThemeProvider } from "@mui/material/styles";
 import { lightTheme, darkTheme } from "./theme";
+import { Analytics } from "@vercel/analytics/react";
 
 /**
  * The main App component
@@ -47,6 +48,7 @@ const App: React.FC = () => {
         <Route path="/terms" element={<TermsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <Analytics />
     </ThemeProvider>
   );
 };
