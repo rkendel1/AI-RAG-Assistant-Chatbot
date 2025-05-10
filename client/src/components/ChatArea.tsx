@@ -24,6 +24,9 @@ import {
 import { IMessage, IConversation } from "../types/conversation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import { motion, AnimatePresence } from "framer-motion";
 import CopyIcon from "./CopyIcon";
 
@@ -631,7 +634,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                         </Box>
                       )}
                       <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
+                        remarkPlugins={[remarkGfm, remarkMath]}
+                        rehypePlugins={[rehypeKatex]}
                         components={{
                           h1: ({ node, children, ...props }) => (
                             <Box
